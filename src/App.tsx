@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, Button } from '@gravity-ui/uikit';
 import '@gravity-ui/uikit/styles/styles.css';
+import './styles/gravity-theme.css';
 
 import type { Theme } from '@gravity-ui/uikit';
 import { useThemeState, useDeposits } from './hooks';
