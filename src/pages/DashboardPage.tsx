@@ -28,10 +28,6 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
     <div>
       <div className="summary-grid">
         <div className="summary-card">
-          <div className="summary-card__label">Активных вкладов</div>
-          <div className="summary-card__value">{active.length}</div>
-        </div>
-        <div className="summary-card">
           <div className="summary-card__label">Общая сумма</div>
           <div className="summary-card__value">{formatCurrencyShort(totalAmount)}</div>
         </div>
@@ -45,9 +41,12 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
       </div>
 
       <div className="section-header">
-        <h2 className="section-header__title">
-          Активные вклады
-        </h2>
+        <div className="section-header__left">
+          <h2 className="section-header__title">
+            Активные вклады
+          </h2>
+          <span className="section-header__count">{active.length}</span>
+        </div>
         <Button view="action" onClick={() => navigate('/add')}>
           + Добавить
         </Button>

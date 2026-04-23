@@ -8,6 +8,35 @@
   --radius-card: 12px;
   --radius-sm: 8px;
   --transition-fast: 0.15s ease;
+
+  /* Primary accent — сине-фиолетовый */
+  --color-accent-h: 240;
+  --color-accent-s: 60%;
+  --color-accent-l: 55%;
+
+  /* Light theme overrides */
+  --g-color-base-brand: hsl(250, 55%, 55%);
+  --g-color-base-brand-hover: hsl(250, 55%, 48%);
+  --g-color-base-selection: hsl(250, 55%, 92%);
+  --g-color-base-selection-hover: hsl(250, 55%, 85%);
+  --g-color-line-brand: hsl(250, 55%, 55%);
+  --g-color-text-brand: hsl(250, 50%, 45%);
+  --g-color-text-link: hsl(240, 55%, 50%);
+  --g-color-text-link-hover: hsl(240, 55%, 40%);
+  --g-color-text-positive: hsl(220, 50%, 45%);
+}
+
+/* Dark theme overrides */
+.g-root_dark {
+  --g-color-base-brand: hsl(250, 60%, 60%);
+  --g-color-base-brand-hover: hsl(250, 60%, 52%);
+  --g-color-base-selection: hsl(250, 40%, 22%);
+  --g-color-base-selection-hover: hsl(250, 40%, 28%);
+  --g-color-line-brand: hsl(250, 60%, 60%);
+  --g-color-text-brand: hsl(250, 50%, 70%);
+  --g-color-text-link: hsl(240, 60%, 65%);
+  --g-color-text-link-hover: hsl(240, 60%, 75%);
+  --g-color-text-positive: hsl(220, 55%, 65%);
 }
 
 * {
@@ -79,7 +108,7 @@ body {
 
 @media (min-width: 600px) {
   .summary-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -411,8 +440,23 @@ input[type="date"] {
   margin-bottom: var(--gap-m);
 }
 
+.section-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+}
+
 .section-header__title {
   font-size: 18px;
   font-weight: 600;
   color: var(--g-color-text-primary);
+}
+
+.section-header__count {
+  font-size: 13px;
+  color: var(--g-color-text-secondary);
+  background: var(--g-color-base-generic);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-weight: 500;
 }
