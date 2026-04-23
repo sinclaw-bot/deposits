@@ -147,6 +147,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Название *</div>
             <TextInput
+              size="l"
               value={form.name}
               onUpdate={v => set('name', v)}
               placeholder="Например: Сбер Вклад"
@@ -159,6 +160,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Сумма *</div>
               <TextInput
+                size="l"
                 type="number"
                 value={form.amount}
                 onUpdate={v => set('amount', v)}
@@ -170,6 +172,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Ставка (% годовых) *</div>
               <TextInput
+                size="l"
                 type="number"
                 value={form.interestRate}
                 onUpdate={v => set('interestRate', v)}
@@ -183,6 +186,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Банк</div>
             <TextInput
+              size="l"
               value={form.bank}
               onUpdate={v => set('bank', v)}
               placeholder="Например: Сбербанк"
@@ -247,6 +251,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Периодичность выплаты процентов</div>
             <Select
+              size="l"
               value={[form.paymentPeriod]}
               onUpdate={([v]) => v && set('paymentPeriod', v as PaymentPeriod)}
               options={PAYMENT_OPTIONS}
@@ -256,6 +261,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Статус</div>
             <Select
+              size="l"
               value={[form.status]}
               onUpdate={([v]) => v && set('status', v as DepositStatus)}
               options={STATUS_OPTIONS}
@@ -274,10 +280,10 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
         </div>
 
         <div className="form-actions">
-          <Button view="outlined" onClick={() => navigate('/')}>
+          <Button view="outlined" size="l" onClick={() => navigate('/')}>
             Отмена
           </Button>
-          <Button view="action" type="submit">
+          <Button view="action" size="l" type="submit">
             {isEdit ? 'Сохранить' : 'Добавить'}
           </Button>
         </div>

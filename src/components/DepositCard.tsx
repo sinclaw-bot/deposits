@@ -91,14 +91,14 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
         <div className="deposit-card__actions" onClick={e => e.stopPropagation()}>
           <Button
             view="outlined"
-            size="s"
+            size="l"
             onClick={() => onEdit(deposit.id)}
           >
             ✏️
           </Button>
           <Button
             view="outlined-danger"
-            size="s"
+            size="l"
             onClick={() => onDelete(deposit.id)}
           >
             🗑️

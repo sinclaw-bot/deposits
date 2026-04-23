@@ -1,10 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 
 .g-root {
-    --g-font-family-sans: 'Merriweather', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    --g-font-family-monospace: 'IBM Plex Mono', 'Monaco', 'Consolas', 'Liberation Mono', 'Ubuntu Mono', 'DejaVu Sans Mono', 'Courier New', 'Courier', monospace;
+    --g-border-radius-xs: 10px;
+    --g-border-radius-s: 12px;
+    --g-border-radius-m: 14px;
+    --g-border-radius-l: 18px;
+    --g-border-radius-xl: 22px;
+
+    --g-font-family-monospace: 'Ubuntu Mono', 'Monaco', 'Consolas', 'Liberation Mono', 'Ubuntu Mono', 'DejaVu Sans Mono', 'Courier New', 'Courier', monospace;
 }
 
 .g-root_theme_light {
@@ -203,8 +208,6 @@
     --g-color-text-brand-contrast: var(--g-color-text-light-primary);
     --g-color-text-link: var(--g-color-private-brand-600-solid);
     --g-color-text-link-hover: var(--g-color-private-brand-800-solid);
-    --g-color-text-link-visited: var(--g-color-private-purple-550-solid);
-    --g-color-text-link-visited-hover: var(--g-color-private-purple-800-solid);
     --g-color-base-background: #F5F5F5;
     --g-color-base-brand: var(--g-color-private-brand-550-solid);
     --g-color-base-brand-hover: var(--g-color-private-brand-600-solid);

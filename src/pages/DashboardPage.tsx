@@ -47,7 +47,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           </h2>
           <span className="section-header__count">{active.length}</span>
         </div>
-        <Button view="action" onClick={() => navigate('/add')}>
+        <Button view="action" size="l" onClick={() => navigate('/add')}>
           + Добавить
         </Button>
       </div>
@@ -58,7 +58,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           <div className="empty-state__text">
             У вас пока нет активных вкладов
           </div>
-          <Button view="action" onClick={() => navigate('/add')}>
+          <Button view="action" size="l" onClick={() => navigate('/add')}>
             Добавить первый вклад
           </Button>
         </div>

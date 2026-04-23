@@ -431,3 +431,13 @@ input[type="date"] {
   border-radius: 100px;
   font-weight: 500;
 }
+
+/* Ensure action buttons have light text in both themes */
+.g-root button[class*="_view_action"] {
+  --g-button-text-color: #ffffff;
+}
+
+/* Fix date input width to match size=l */
+input[type="date"] {
+  min-height: 44px;
+}
