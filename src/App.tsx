@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, Button } from '@gravity-ui/uikit';
+import { FileArrowUp, FileArrowDown, Sun, Moon } from '@gravity-ui/icons';
 import '@gravity-ui/uikit/styles/styles.css';
 import './styles/gravity-theme.css';
 
@@ -25,20 +26,20 @@ function Header({
 }) {
   return (
     <header className="app-header">
-      <span className="app-header__title">🏦 Вклады</span>
+      <span className="app-header__title">Вклады</span>
       <div className="app-header__actions">
         <Button view="flat" size="s" onClick={onExport}>
-          📤 Экспорт
+          <FileArrowUp /> Экспорт
         </Button>
         <Button view="flat" size="s" onClick={onImport}>
-          📥 Импорт
+          <FileArrowDown /> Импорт
         </Button>
         <Button
           view="flat"
           size="s"
           onClick={toggleTheme}
         >
-          {theme === 'light' ? '🌙' : '☀️'}
+          {theme === 'light' ? <Moon /> : <Sun />}
         </Button>
       </div>
     </header>

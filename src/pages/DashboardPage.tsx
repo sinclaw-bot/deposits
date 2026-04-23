@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, TextInput, Select } from '@gravity-ui/uikit';
+import { Funnel, Plus, Sliders } from '@gravity-ui/icons';
 import type { Deposit } from '../types';
 import {
   calcTotalActiveAmount,
@@ -122,7 +123,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           size="l"
           onClick={() => setFiltersOpen(o => !o)}
         >
-          {hasActiveFilters ? '🔍' : '⚙️'}
+          {hasActiveFilters ? <Funnel /> : <Sliders />}
         </Button>
       </div>
 
@@ -209,7 +210,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
         onClick={() => navigate('/add')}
         aria-label="Добавить вклад"
       >
-        +
+        <Plus />
       </button>
     </div>
   );
