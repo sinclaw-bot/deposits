@@ -437,6 +437,12 @@ input[type="date"] {
   --g-button-text-color: #ffffff;
 }
 
+/* Gravity UI icons inside buttons and FAB */
+.g-root button svg,
+.fab svg {
+  display: block;
+}
+
 /* Date inputs — let native picker size itself */
 
 /* Filters panel (collapsible) */

@@ -1,11 +1,10 @@
 import { useState, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, Button } from '@gravity-ui/uikit';
-import { FileArrowUp, FileArrowDown, Sun, Moon } from '@gravity-ui/icons';
+import { ThemeProvider, Button, Icon, Drawer } from '@gravity-ui/uikit';
+import { FileArrowUp, FileArrowDown, Sun, Moon, Bars } from '@gravity-ui/icons';
 import '@gravity-ui/uikit/styles/styles.css';
 import './styles/gravity-theme.css';
 
-import type { Theme } from '@gravity-ui/uikit';
 import { useThemeState, useDeposits } from './hooks';
 import { DashboardPage } from './pages/DashboardPage';
 import { DepositForm } from './components/DepositForm';
@@ -13,41 +12,20 @@ import { ConfirmDialog } from './components/ConfirmDialog';
 import type { Deposit } from './types';
 import './styles/global.css';
 
-function Header({
-  theme,
-  toggleTheme,
-  onExport,
-  onImport,
-}: {
-  theme: Theme;
-  toggleTheme: () => void;
-  onExport: () => void;
-  onImport: () => void;
-}) {
+function Header({ onMenuClick }: { onMenuClick: () => void }) {
   return (
     <header className="app-header">
-      <span className="app-header__title">Вклады</span>
-      <div className="app-header__actions">
-        <Button view="flat" size="s" onClick={onExport}>
-          <FileArrowUp /> Экспорт
-        </Button>
-        <Button view="flat" size="s" onClick={onImport}>
-          <FileArrowDown /> Импорт
-        </Button>
-        <Button
-          view="flat"
-          size="s"
-          onClick={toggleTheme}
-        >
-          {theme === 'light' ? <Moon /> : <Sun />}
-        </Button>
-      </div>
+      <span className="app-header__title">🏦 Вклады</span>
+      <Button view="flat" size="l" onClick={onMenuClick}>
+        <Icon data={Bars} size={18} />
+      </Button>
     </header>
   );
 }
 
 export function App() {
   const { theme, toggleTheme } = useThemeState();
+  const [menuOpen, setMenuOpen] = useState(false);
   const { deposits, setDeposits, addDeposit, updateDeposit, deleteDeposit } = useDeposits();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [importConfirm, setImportConfirm] = useState<Deposit[] | null>(null);
@@ -105,7 +83,6 @@ export function App() {
     };
     reader.readAsText(file);
 
-    // Reset input so the same file can be re-selected
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -128,12 +105,7 @@ export function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter basename="/deposits">
         <div className="app-layout">
-          <Header
-            theme={theme}
-            toggleTheme={toggleTheme}
-            onExport={handleExport}
-            onImport={handleImportClick}
-          />
+          <Header onMenuClick={() => setMenuOpen(true)} />
 
           <input
             ref={fileInputRef}
@@ -177,6 +149,21 @@ export function App() {
               />
             </Routes>
           </main>
+
+          <Drawer open={menuOpen} onOpenChange={(o) => setMenuOpen(o)} placement="right">
+            <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Меню</h3>
+              <Button view="normal" size="l" onClick={handleExport} style={{ justifyContent: 'flex-start' }}>
+                <Icon data={FileArrowUp} size={16} /> Экспорт данных
+              </Button>
+              <Button view="normal" size="l" onClick={handleImportClick} style={{ justifyContent: 'flex-start' }}>
+                <Icon data={FileArrowDown} size={16} /> Импорт данных
+              </Button>
+              <Button view="flat" size="l" onClick={toggleTheme} style={{ justifyContent: 'flex-start' }}>
+                <Icon data={theme === 'light' ? Moon : Sun} size={16} /> {theme === 'light' ? 'Тёмная тема' : 'Светлая тема'}
+              </Button>
+            </div>
+          </Drawer>
         </div>
 
         <ConfirmDialog
