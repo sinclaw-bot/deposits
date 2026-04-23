@@ -50,6 +50,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
   const [sortMode, setSortMode] = useState<SortMode>('date');
   const [searchQuery, setSearchQuery] = useState('');
   const [bankFilter, setBankFilter] = useState<string>('all');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Get unique banks
   const uniqueBanks = useMemo(() => {
@@ -65,21 +66,16 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
     ...uniqueBanks.map(b => ({ value: b, content: b })),
   ], [uniqueBanks]);
 
-  // Filter & sort deposits
+  // Filter deposits
   const filteredDeposits = useMemo(() => {
     let result = [...deposits];
-
-    // Search by name
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(d => d.name.toLowerCase().includes(q));
     }
-
-    // Filter by bank
     if (bankFilter !== 'all') {
       result = result.filter(d => d.bank === bankFilter);
     }
-
     return result;
   }, [deposits, searchQuery, bankFilter]);
 
@@ -91,6 +87,8 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
     filteredDeposits.filter(d => d.status === 'closed'),
     sortMode
   );
+
+  const hasActiveFilters = searchQuery.trim() !== '' || bankFilter !== 'all';
 
   const totalAmount = calcTotalActiveAmount(deposits);
   const totalMonthly = calcTotalMonthlyIncome(deposits);
@@ -118,46 +116,61 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
             Активные вклады
           </h2>
           <span className="section-header__count">{active.length}</span>
-          <Select
-            size="s"
-            value={[sortMode]}
-            onUpdate={([v]) => v && setSortMode(v as SortMode)}
-            options={SORT_OPTIONS}
-          />
         </div>
-        <Button view="action" size="l" onClick={() => navigate('/add')}>
-          + Добавить
+        <Button
+          view={hasActiveFilters ? 'action' : 'flat'}
+          size="l"
+          onClick={() => setFiltersOpen(o => !o)}
+        >
+          {hasActiveFilters ? '🔍' : '⚙️'}
         </Button>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <TextInput
-          size="s"
-          value={searchQuery}
-          onUpdate={setSearchQuery}
-          placeholder="Поиск по названию..."
-          style={{ flex: 1 }}
-        />
-        <Select
-          size="s"
-          value={[bankFilter]}
-          onUpdate={([v]) => v && setBankFilter(v)}
-          options={bankOptions}
-          className="bank-filter-select"
-        />
-      </div>
+      {filtersOpen && (
+        <div className="filters-panel">
+          <TextInput
+            size="l"
+            value={searchQuery}
+            onUpdate={setSearchQuery}
+            placeholder="Поиск по названию..."
+          />
+          <div className="filters-panel__row">
+            <Select
+              size="l"
+              value={[sortMode]}
+              onUpdate={([v]) => v && setSortMode(v as SortMode)}
+              options={SORT_OPTIONS}
+            />
+            <Select
+              size="l"
+              value={[bankFilter]}
+              onUpdate={([v]) => v && setBankFilter(v)}
+              options={bankOptions}
+            />
+          </div>
+          {(hasActiveFilters) && (
+            <Button
+              view="outlined"
+              size="l"
+              onClick={() => {
+                setSearchQuery('');
+                setBankFilter('all');
+              }}
+            >
+              Сбросить фильтры
+            </Button>
+          )}
+        </div>
+      )}
 
       {active.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state__icon">🏦</div>
           <div className="empty-state__text">
-            {searchQuery || bankFilter !== 'all'
+            {hasActiveFilters
               ? 'Нет вкладов, соответствующих фильтрам'
               : 'У вас пока нет активных вкладов'}
           </div>
-          <Button view="action" size="l" onClick={() => navigate('/add')}>
-            Добавить первый вклад
-          </Button>
         </div>
       ) : (
         <div className="deposits-grid">
@@ -189,6 +202,15 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           </div>
         </>
       )}
+
+      {/* Floating action button */}
+      <button
+        className="fab"
+        onClick={() => navigate('/add')}
+        aria-label="Добавить вклад"
+      >
+        +
+      </button>
     </div>
   );
 }

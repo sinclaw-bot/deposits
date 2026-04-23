@@ -438,3 +438,63 @@ input[type="date"] {
 }
 
 /* Date inputs — let native picker size itself */
+
+/* Filters panel (collapsible) */
+.filters-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  margin-bottom: var(--gap-m);
+  padding: var(--gap-m);
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+  border-radius: var(--radius-sm);
+}
+
+.filters-panel__row {
+  display: flex;
+  gap: var(--gap-s);
+}
+
+.filters-panel__row > * {
+  flex: 1;
+}
+
+/* Floating action button */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--g-color-base-brand);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 300;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  z-index: 50;
+  line-height: 1;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 600px) {
+  .fab {
+    bottom: 32px;
+    right: 32px;
+  }
+}
