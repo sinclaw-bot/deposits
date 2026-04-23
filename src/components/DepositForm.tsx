@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, TextInput, Select } from '@gravity-ui/uikit';
+import { Button, TextInput, Select, Switch } from '@gravity-ui/uikit';
+import { DatePicker } from '@gravity-ui/date-components';
+import { dateTime } from '@gravity-ui/date-utils';
 import type { Deposit, PaymentPeriod, DepositStatus } from '../types';
 import { ColorPicker } from './ColorPicker';
+import { getBankColor } from '../utils/calculations';
 
 interface DepositFormProps {
   deposits: Deposit[];
@@ -20,6 +23,7 @@ interface FormData {
   bank: string;
   status: DepositStatus;
   color: string;
+  capitalization: boolean;
 }
 
 interface FormErrors {
@@ -62,6 +66,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
     bank: '',
     status: 'active',
     color: '#4DABF7',
+    capitalization: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -78,11 +83,12 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
         bank: existing.bank || '',
         status: existing.status,
         color: existing.color,
+        capitalization: existing.capitalization,
       });
     }
   }, [existing]);
 
-  const set = (field: keyof FormData, value: string) => {
+  const set = (field: keyof FormData, value: string | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
     // clear error on change
     if (errors[field as keyof FormErrors]) {
@@ -110,6 +116,12 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
     return Object.keys(errs).length === 0;
   };
 
+  const parseDt = (d: string): ReturnType<typeof dateTime> | undefined => {
+    if (!d) return undefined;
+    const [y, m, day] = d.split('-').map(Number);
+    return dateTime({ timeZone: 'UTC' }).year(y).month(m).date(day);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -124,6 +136,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
       bank: form.bank.trim() || undefined,
       status: form.status,
       color: form.color,
+      capitalization: form.capitalization,
     };
 
     if (isEdit && id) {
@@ -188,7 +201,12 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <TextInput
               size="l"
               value={form.bank}
-              onUpdate={v => set('bank', v)}
+              onUpdate={v => {
+                set('bank', v);
+                if (v.trim()) {
+                  set('color', getBankColor(v));
+                }
+              }}
               placeholder="Например: Сбербанк"
             />
           </div>
@@ -200,47 +218,29 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row form-row--inline">
             <div>
               <div className="form-label">Дата открытия *</div>
-              <input
-                type="date"
-                value={form.openDate}
-                onChange={e => set('openDate', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: 36,
-                  padding: '0 8px',
-                  borderRadius: 6,
-                  border: errors.openDate ? '1px solid var(--g-color-line-danger)' : '1px solid var(--g-color-line-generic)',
-                  background: 'var(--g-color-base-generic)',
-                  color: 'var(--g-color-text-primary)',
-                  fontSize: 15,
-                  fontFamily: 'inherit',
+              <DatePicker
+                size="l"
+                value={parseDt(form.openDate)}
+                onUpdate={(dt) => {
+                  const val = dt ? `${dt.year()}-${String(dt.month()).padStart(2, '0')}-${String(dt.date()).padStart(2, '0')}` : '';
+                  set('openDate', val);
                 }}
+                validationState={errors.openDate ? 'invalid' : undefined}
+                errorMessage={errors.openDate}
               />
-              {errors.openDate && (
-                <div style={{ color: 'var(--g-color-text-danger)', fontSize: 12, marginTop: 4 }}>{errors.openDate}</div>
-              )}
             </div>
             <div>
               <div className="form-label">Дата окончания</div>
-              <input
-                type="date"
-                value={form.endDate}
-                onChange={e => set('endDate', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: 36,
-                  padding: '0 8px',
-                  borderRadius: 6,
-                  border: errors.endDate ? '1px solid var(--g-color-line-danger)' : '1px solid var(--g-color-line-generic)',
-                  background: 'var(--g-color-base-generic)',
-                  color: 'var(--g-color-text-primary)',
-                  fontSize: 15,
-                  fontFamily: 'inherit',
+              <DatePicker
+                size="l"
+                value={parseDt(form.endDate)}
+                onUpdate={(dt) => {
+                  const val = dt ? `${dt.year()}-${String(dt.month()).padStart(2, '0')}-${String(dt.date()).padStart(2, '0')}` : '';
+                  set('endDate', val);
                 }}
+                validationState={errors.endDate ? 'invalid' : undefined}
+                errorMessage={errors.endDate}
               />
-              {errors.endDate && (
-                <div style={{ color: 'var(--g-color-text-danger)', fontSize: 12, marginTop: 4 }}>{errors.endDate}</div>
-              )}
             </div>
           </div>
         </div>
@@ -256,6 +256,16 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
               onUpdate={([v]) => v && set('paymentPeriod', v as PaymentPeriod)}
               options={PAYMENT_OPTIONS}
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-label">Капитализация процентов</div>
+            <Switch
+              checked={form.capitalization}
+              onUpdate={v => set('capitalization', v)}
+            >
+              Капитализация процентов
+            </Switch>
           </div>
 
           <div className="form-row">

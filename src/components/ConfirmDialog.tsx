@@ -6,9 +6,21 @@ interface ConfirmDialogProps {
   text: string;
   onConfirm: () => void;
   onCancel: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  confirmView?: 'outlined-danger' | 'action' | 'outlined';
 }
 
-export function ConfirmDialog({ open, title, text, onConfirm, onCancel }: ConfirmDialogProps) {
+export function ConfirmDialog({
+  open,
+  title,
+  text,
+  onConfirm,
+  onCancel,
+  confirmText = 'Подтвердить',
+  cancelText = 'Отмена',
+  confirmView = 'outlined-danger',
+}: ConfirmDialogProps) {
   if (!open) return null;
 
   return (
@@ -17,8 +29,8 @@ export function ConfirmDialog({ open, title, text, onConfirm, onCancel }: Confir
         <div className="confirm-dialog__title">{title}</div>
         <div className="confirm-dialog__text">{text}</div>
         <div className="confirm-dialog__actions">
-          <Button view="outlined" onClick={onCancel}>Отмена</Button>
-          <Button view="outlined-danger" onClick={onConfirm}>Удалить</Button>
+          <Button view="outlined" onClick={onCancel}>{cancelText}</Button>
+          <Button view={confirmView} onClick={onConfirm}>{confirmText}</Button>
         </div>
       </div>
     </div>

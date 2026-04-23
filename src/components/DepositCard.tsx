@@ -5,6 +5,7 @@ import {
   calcTotalIncome,
   calcAvgMonthlyIncome,
   calcProgress,
+  calcNextPayoutDate,
   formatCurrencyShort,
 } from '../utils/calculations';
 
@@ -20,6 +21,14 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
   const totalIncome = calcTotalIncome(deposit);
   const progress = calcProgress(deposit);
   const hasEndDate = !!deposit.endDate;
+  const nextPayoutDate = calcNextPayoutDate(deposit);
+  
+  function formatDate(d: Date): string {
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
 
   return (
     <div className="deposit-card" onClick={() => navigate(`/edit/${deposit.id}`)}>
@@ -66,6 +75,14 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
               <span className="deposit-card__stat-label">Доход всего</span>
               <span className="deposit-card__stat-value --positive">
                 +{formatCurrencyShort(totalIncome)}
+              </span>
+            </div>
+          )}
+          {nextPayoutDate && (
+            <div className="deposit-card__stat">
+              <span className="deposit-card__stat-label">След. выплата</span>
+              <span className="deposit-card__stat-value">
+                {formatDate(nextPayoutDate)}
               </span>
             </div>
           )}

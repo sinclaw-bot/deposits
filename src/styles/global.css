@@ -437,7 +437,4 @@ input[type="date"] {
   --g-button-text-color: #ffffff;
 }
 
-/* Fix date input width to match size=l */
-input[type="date"] {
-  min-height: 44px;
-}
+/* Date inputs — let native picker size itself */

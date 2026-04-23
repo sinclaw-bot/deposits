@@ -17,23 +17,27 @@ function saveDeposits(deposits: Deposit[]) {
 }
 
 export function useDeposits() {
-  const [deposits, setDeposits] = useState<Deposit[]>(loadDeposits);
+  const [deposits, setDepositsState] = useState<Deposit[]>(loadDeposits);
 
   useEffect(() => {
     saveDeposits(deposits);
   }, [deposits]);
 
+  const setDeposits = useCallback((newDeposits: Deposit[]) => {
+    setDepositsState(newDeposits);
+  }, []);
+
   const addDeposit = useCallback((data: Omit<Deposit, 'id'>) => {
     const deposit: Deposit = { ...data, id: uuidv4() };
-    setDeposits(prev => [...prev, deposit]);
+    setDepositsState(prev => [...prev, deposit]);
   }, []);
 
   const updateDeposit = useCallback((id: string, data: Partial<Omit<Deposit, 'id'>>) => {
-    setDeposits(prev => prev.map(d => d.id === id ? { ...d, ...data } : d));
+    setDepositsState(prev => prev.map(d => d.id === id ? { ...d, ...data } : d));
   }, []);
 
   const deleteDeposit = useCallback((id: string) => {
-    setDeposits(prev => prev.filter(d => d.id !== id));
+    setDepositsState(prev => prev.filter(d => d.id !== id));
   }, []);
 
   const getDeposit = useCallback((id: string): Deposit | undefined => {
@@ -42,5 +46,5 @@ export function useDeposits() {
 
   const activeDeposits = deposits.filter(d => d.status === 'active');
 
-  return { deposits, activeDeposits, addDeposit, updateDeposit, deleteDeposit, getDeposit };
+  return { deposits, activeDeposits, addDeposit, updateDeposit, deleteDeposit, getDeposit, setDeposits };
 }

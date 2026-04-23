@@ -12,6 +12,7 @@ export interface Deposit {
   bank?: string;
   status: DepositStatus;
   color: string; // hex color for label
+  capitalization: boolean; // сложный процент
 }
 
 export interface DepositsData {
