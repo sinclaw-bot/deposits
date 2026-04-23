@@ -1,0 +1,418 @@
+:root {
+  --header-height: 56px;
+  --sidebar-width: 240px;
+  --content-max-width: 800px;
+  --gap-s: 8px;
+  --gap-m: 16px;
+  --gap-l: 24px;
+  --radius-card: 12px;
+  --radius-sm: 8px;
+  --transition-fast: 0.15s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--g-font-family-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  background: var(--g-color-base-background);
+  color: var(--g-color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 var(--gap-m);
+  background: var(--g-color-base-float);
+  border-bottom: 1px solid var(--g-color-line-generic);
+  backdrop-filter: blur(8px);
+}
+
+.app-header__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--g-color-text-primary);
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+}
+
+.app-content {
+  flex: 1;
+  padding: var(--gap-m);
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Dashboard summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-m);
+  margin-bottom: var(--gap-l);
+}
+
+@media (min-width: 600px) {
+  .summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.summary-card {
+  padding: var(--gap-m);
+  border-radius: var(--radius-card);
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+}
+
+.summary-card__label {
+  font-size: 13px;
+  color: var(--g-color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.summary-card__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--g-color-text-primary);
+}
+
+.summary-card__sub {
+  font-size: 12px;
+  color: var(--g-color-text-hint);
+  margin-top: 2px;
+}
+
+/* Deposit card grid */
+.deposits-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-m);
+}
+
+@media (min-width: 600px) {
+  .deposits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.deposit-card {
+  position: relative;
+  padding: var(--gap-m);
+  border-radius: var(--radius-card);
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast);
+}
+
+.deposit-card:active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.deposit-card__color-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
+}
+
+.deposit-card__body {
+  padding-left: 12px;
+}
+
+.deposit-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--gap-s);
+}
+
+.deposit-card__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--g-color-text-primary);
+}
+
+.deposit-card__bank {
+  font-size: 13px;
+  color: var(--g-color-text-secondary);
+  margin-top: 2px;
+}
+
+.deposit-card__amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--g-color-text-primary);
+  margin-bottom: var(--gap-s);
+}
+
+.deposit-card__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-s);
+  margin-bottom: var(--gap-s);
+}
+
+.deposit-card__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.deposit-card__stat-label {
+  font-size: 11px;
+  color: var(--g-color-text-hint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.deposit-card__stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--g-color-text-primary);
+}
+
+.deposit-card__stat-value.--positive {
+  color: var(--g-color-text-positive);
+}
+
+.deposit-card__progress {
+  margin-top: var(--gap-s);
+}
+
+.deposit-card__progress-bar {
+  height: 4px;
+  background: var(--g-color-line-generic);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.deposit-card__progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width var(--transition-fast);
+}
+
+.deposit-card__progress-label {
+  font-size: 11px;
+  color: var(--g-color-text-hint);
+  margin-top: 4px;
+}
+
+.deposit-card__actions {
+  display: flex;
+  gap: var(--gap-s);
+  margin-top: var(--gap-s);
+}
+
+/* Form */
+.form-page {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-page__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: var(--gap-l);
+  color: var(--g-color-text-primary);
+}
+
+.form-section {
+  margin-bottom: var(--gap-m);
+}
+
+.form-section__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--g-color-text-secondary);
+  margin-bottom: var(--gap-s);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  margin-bottom: var(--gap-m);
+}
+
+.form-row--inline {
+  flex-direction: row;
+  gap: var(--gap-m);
+}
+
+.form-row--inline > * {
+  flex: 1;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--g-color-text-primary);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--gap-s);
+  margin-top: var(--gap-l);
+}
+
+.form-actions > * {
+  flex: 1;
+}
+
+/* Color picker */
+.color-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.--selected {
+  border-color: var(--g-color-text-primary);
+  transform: scale(1.15);
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--gap-m);
+  text-align: center;
+  color: var(--g-color-text-secondary);
+}
+
+.empty-state__icon {
+  font-size: 48px;
+  margin-bottom: var(--gap-m);
+  opacity: 0.3;
+}
+
+.empty-state__text {
+  font-size: 16px;
+  margin-bottom: var(--gap-l);
+}
+
+/* Confirm dialog */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--gap-m);
+}
+
+.confirm-dialog {
+  background: var(--g-color-base-float);
+  border-radius: var(--radius-card);
+  padding: var(--gap-l);
+  max-width: 400px;
+  width: 100%;
+}
+
+.confirm-dialog__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: var(--gap-s);
+  color: var(--g-color-text-primary);
+}
+
+.confirm-dialog__text {
+  font-size: 14px;
+  color: var(--g-color-text-secondary);
+  margin-bottom: var(--gap-l);
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  gap: var(--gap-s);
+  justify-content: flex-end;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-badge--active {
+  background: var(--g-color-base-positive-light);
+  color: var(--g-color-text-positive);
+}
+
+.status-badge--closed {
+  background: var(--g-color-base-danger-light);
+  color: var(--g-color-text-danger);
+}
+
+/* Date input styling to match Gravity UI */
+input[type="date"] {
+  font-family: inherit;
+  color-scheme: var(--g-color-scheme, light);
+}
+
+/* Section header */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap-m);
+}
+
+.section-header__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--g-color-text-primary);
+}
