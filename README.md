@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# Deposits
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Deposit tracking app — track bank deposits, calculate interest, forecast earnings.
 
-Currently, two official plugins are available:
+Built with **React + TypeScript + Vite** and **[Gravity UI](https://gravity-ui.com/)** (Yandex UI kit).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Deposit dashboard** — total amount, monthly interest, yearly forecast
+- **CRUD deposits** — add, edit, close, and delete deposits
+- **Smart calculations** — monthly/quarterly/yearly/end-of-term interest periods
+- **Custom themes** — light & dark mode with a blue-purple palette
+- **Mobile-first** — works well on phones
+- **Local storage** — all data stays on your device
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+| Layer | Tech |
+|-------|------|
+| Framework | React 19 |
+| Language | TypeScript |
+| Bundler | Vite |
+| UI Kit | Gravity UI (Yandex) |
+| Date picker | @gravity-ui/date-components |
+| Routing | React Router v7 |
+| Storage | localStorage |
+| Styling | CSS + Gravity UI theme variables |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Usage
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Open the app: [https://sinclaw-bot.github.io/deposits/](https://sinclaw-bot.github.io/deposits/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+No backend, no signup. All data stays in your browser (localStorage).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Development
+
+```bash
+git clone git@github.com:sinclaw-bot/deposits.git
+cd deposits
+npm install
+npm run dev     # dev server at localhost:5173
+npm run build   # production build → dist/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+MIT
