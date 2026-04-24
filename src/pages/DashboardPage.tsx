@@ -10,6 +10,7 @@ import {
   calcTotalAvgRate,
   formatCurrencyShort,
 } from '../utils/calculations';
+import { calcDonutSlices, DonutChart } from '../utils/donut';
 import { DepositCard } from '../components/DepositCard';
 
 interface DashboardPageProps {
@@ -96,26 +97,44 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
   const totalMonthly = calcTotalMonthlyIncome(deposits);
   const totalYearForecast = calcTotalYearForecast(deposits);
   const totalAvgRate = calcTotalAvgRate(deposits);
+  const donutSlices = calcDonutSlices(deposits);
+
+  // Stats row for summary card — like deposit card stats
+  const hasCapitalization = deposits.some(d => d.status === 'active' && d.capitalization);
 
   return (
     <div>
-      <div className="summary-grid">
-        <div className="summary-card">
-          <div className="summary-card__label">Общая сумма</div>
-          <div className="summary-card__value">{formatCurrencyShort(totalAmount)}</div>
-        </div>
-        <div className="summary-card">
-          <div className="summary-card__label">Ежемесячный доход</div>
-          <div className="summary-card__value">+{formatCurrencyShort(totalMonthly)}</div>
-          <div className="summary-card__sub">
-            Прогноз на год: +{formatCurrencyShort(totalYearForecast)}
-          </div>
-          {totalAvgRate > 0 && (
-            <div className="summary-card__sub" style={{marginTop: 6}}>
-              Средняя ставка: {totalAvgRate.toFixed(1)}%
-              {deposits.some(d => d.status === 'active' && d.capitalization) && ' *'}
+      <div className="summary-card summary-card--compact">
+        <div className="summary-card__row">
+          <DonutChart slices={donutSlices} size={80} />
+          <div className="summary-card__info">
+            <div className="summary-card__main-row">
+              <div className="summary-card__amount">
+                {formatCurrencyShort(totalAmount)}
+              </div>
+              <div className="summary-card__income">
+                +{formatCurrencyShort(totalMonthly)}/мес
+              </div>
             </div>
-          )}
+            <div className="summary-card__stats-row">
+              <div className="summary-card__stat">
+                <span className="summary-card__stat-label">Ставка</span>
+                <span className="summary-card__stat-value">
+                  {totalAvgRate.toFixed(1)}%{hasCapitalization && '*'}
+                </span>
+              </div>
+              <div className="summary-card__stat">
+                <span className="summary-card__stat-label">За год</span>
+                <span className="summary-card__stat-value summary-card__stat-value--positive">
+                  +{formatCurrencyShort(totalYearForecast)}
+                </span>
+              </div>
+              <div className="summary-card__stat">
+                <span className="summary-card__stat-label">Вкладов</span>
+                <span className="summary-card__stat-value">{active.length}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

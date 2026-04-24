@@ -69,20 +69,71 @@ body {
   margin: 0 auto;
 }
 
-/* Dashboard summary cards */
-.summary-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gap-m);
+/* Compact summary card (single card with donut) */
+.summary-card--compact {
   margin-bottom: var(--gap-l);
 }
 
-@media (min-width: 600px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.summary-card__row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-m);
 }
 
+.summary-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.summary-card__main-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--gap-s);
+}
+
+.summary-card__amount {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--g-color-text-primary);
+}
+
+.summary-card__income {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--g-color-text-positive);
+  white-space: nowrap;
+}
+
+.summary-card__stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-m);
+}
+
+.summary-card__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-card__stat-label {
+  font-size: 11px;
+  color: var(--g-color-text-hint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-card__stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--g-color-text-primary);
+}
+
+.summary-card__stat-value--positive {
+  color: var(--g-color-text-positive);
+}
+
+/* Fallback for old summary classes (keep for compat) */
 .summary-card {
   padding: var(--gap-m);
   border-radius: var(--radius-card);
