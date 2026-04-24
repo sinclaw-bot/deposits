@@ -285,8 +285,6 @@ body {
 /* Swipe delete */
 .deposit-card-wrapper {
   position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-card);
   margin-bottom: 0;
 }
 
@@ -307,6 +305,17 @@ body {
   font-weight: 500;
   border-radius: var(--radius-card);
   z-index: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.deposit-card__swipe-hint--visible {
+  opacity: 1;
+}
+
+.deposit-card__swipe-hint-text {
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .deposit-card {
@@ -321,6 +330,7 @@ body {
   user-select: none;
   z-index: 1;
   will-change: transform;
+  background-color: var(--g-color-base-float);
 }
 
 /* Delete button on hover (desktop) */
