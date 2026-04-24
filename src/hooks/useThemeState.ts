@@ -3,6 +3,7 @@ import type { Theme } from '@gravity-ui/uikit';
 import { tg } from '../lib/telegram';
 
 const THEME_STORAGE_KEY = 'deposits-theme';
+const HIDE_AMOUNTS_KEY = 'deposits-hide-amounts';
 
 export type ThemeOption = 'light' | 'dark' | 'telegram';
 
@@ -20,6 +21,10 @@ export function useThemeState() {
     return 'light';
   });
 
+  const [hideAmounts, setHideAmounts] = useState(() =>
+    localStorage.getItem(HIDE_AMOUNTS_KEY) === 'true'
+  );
+
   const theme: Theme = resolveTelegramTheme(themeOption);
 
   const setTheme = useCallback((option: ThemeOption) => {
@@ -35,10 +40,18 @@ export function useThemeState() {
     }
   }, [themeOption, setTheme]);
 
-  // sync to localStorage on change
+  const toggleHideAmounts = useCallback(() => {
+    setHideAmounts(v => !v);
+  }, []);
+
+  // persist
   useEffect(() => {
     localStorage.setItem(THEME_STORAGE_KEY, themeOption);
   }, [themeOption]);
 
-  return { theme, themeOption, setTheme, toggleTheme };
+  useEffect(() => {
+    localStorage.setItem(HIDE_AMOUNTS_KEY, String(hideAmounts));
+  }, [hideAmounts]);
+
+  return { theme, themeOption, hideAmounts, setTheme, toggleTheme, toggleHideAmounts };
 }

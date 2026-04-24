@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, Button, Icon, Drawer } from '@gravity-ui/uikit';
-import { FileArrowUp, FileArrowDown, Sun, Moon, Bars } from '@gravity-ui/icons';
+import { FileArrowUp, FileArrowDown, Sun, Moon, Bars, Eye, EyeSlash } from '@gravity-ui/icons';
 import '@gravity-ui/uikit/styles/styles.css';
 import './styles/gravity-theme.css';
 import './styles/tg-theme.css';
@@ -15,19 +15,28 @@ import { isTelegram } from './lib/telegram';
 import type { Deposit } from './types';
 import './styles/global.css';
 
-function Header({ onMenuClick }: { onMenuClick: () => void }) {
+function Header({ onMenuClick, hideAmounts, onToggleHide }: {
+  onMenuClick: () => void;
+  hideAmounts: boolean;
+  onToggleHide: () => void;
+}) {
   return (
     <header className="app-header">
       <span className="app-header__title">🏦 Вклады</span>
-      <Button view="flat" size="l" onClick={onMenuClick}>
-        <Icon data={Bars} size={18} />
-      </Button>
+      <div className="app-header__actions">
+        <Button view="flat" size="l" onClick={onToggleHide}>
+          <Icon data={hideAmounts ? EyeSlash : Eye} size={18} />
+        </Button>
+        <Button view="flat" size="l" onClick={onMenuClick}>
+          <Icon data={Bars} size={18} />
+        </Button>
+      </div>
     </header>
   );
 }
 
 export function App() {
-  const { theme, themeOption, setTheme, toggleTheme } = useThemeState();
+  const { theme, themeOption, hideAmounts, setTheme, toggleTheme, toggleHideAmounts } = useThemeState();
   const [menuOpen, setMenuOpen] = useState(false);
   const { deposits, setDeposits, addDeposit, updateDeposit, deleteDeposit } = useDeposits();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -42,6 +51,11 @@ export function App() {
     }
     // No cleanup needed — component stays mounted
   }, []);
+
+  // Toggle hide-amounts class on body
+  useEffect(() => {
+    document.documentElement.classList.toggle('hide-amounts', hideAmounts);
+  }, [hideAmounts]);
 
   const handleAdd = (data: Parameters<typeof addDeposit>[0]) => {
     addDeposit(data);
@@ -117,7 +131,11 @@ export function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter basename="/deposits">
         <div className="app-layout">
-          <Header onMenuClick={() => setMenuOpen(true)} />
+          <Header
+            onMenuClick={() => setMenuOpen(true)}
+            hideAmounts={hideAmounts}
+            onToggleHide={toggleHideAmounts}
+          />
 
           <input
             ref={fileInputRef}

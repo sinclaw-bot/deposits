@@ -54,6 +54,12 @@ body {
 .app-header__actions {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
   gap: var(--gap-s);
 }
 
@@ -656,4 +662,23 @@ input[type="date"] {
     bottom: 32px;
     right: 32px;
   }
+}
+
+/* Hide amounts mode */
+html.hide-amounts .deposit-card__amount,
+html.hide-amounts .deposit-card__income-tag,
+html.hide-amounts .summary-card__amount,
+html.hide-amounts .summary-card__income,
+html.hide-amounts .summary-card__stat-value--positive {
+  filter: blur(8px);
+  user-select: none;
+  transition: filter 0.2s ease;
+}
+
+html.hide-amounts .summary-card__stat-value {
+  filter: blur(8px);
+}
+
+html.hide-amounts .deposit-card__tag:first-child {
+  filter: blur(8px);
 }
