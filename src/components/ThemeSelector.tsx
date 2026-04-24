@@ -29,7 +29,7 @@ export function ThemeSelector({ value, onChange }: ThemeSelectorProps) {
         <Button
           key={opt.value}
           view={value === opt.value ? 'action' : 'normal'}
-          size="l"
+          size="xl"
           onClick={() => onChange(opt.value)}
           style={{ justifyContent: 'flex-start' }}
         >
