@@ -64,7 +64,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
   const [swipeX, setSwipeX] = useState(0);
   const [swiping, setSwiping] = useState(false);
   const [hoverDelete, setHoverDelete] = useState(false);
-  const [swipedPast, setSwipedPast] = useState(false);
+  const swipedPastRef = useRef(false);
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -77,7 +77,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     touchActive.current = true;
     currentSwipe.current = 0;
     setSwipeX(0);
-    setSwipedPast(false);
+    swipedPastRef.current = false;
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -93,7 +93,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     currentSwipe.current = clamped;
     setSwipeX(clamped);
     setSwiping(true);
-    setSwipedPast(clamped < -SWIPE_THRESHOLD);
+    swipedPastRef.current = clamped < -SWIPE_THRESHOLD;
   }, []);
 
   const handleTouchEnd = useCallback(() => {
@@ -107,7 +107,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
 
     setSwipeX(0);
     currentSwipe.current = 0;
-    setSwipedPast(false);
+    swipedPastRef.current = false;
   }, [deposit.id, onDelete]);
 
   const handleCardClick = useCallback(() => {
