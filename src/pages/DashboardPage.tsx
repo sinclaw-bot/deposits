@@ -8,7 +8,6 @@ import {
   calcTotalMonthlyIncome,
   calcTotalYearForecast,
   calcTotalAvgRate,
-  formatRate,
   formatCurrencyShort,
 } from '../utils/calculations';
 import { DepositCard } from '../components/DepositCard';
