@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import type { Deposit } from '../types';
 
 interface AppContextType {
   hideAmounts: boolean;
