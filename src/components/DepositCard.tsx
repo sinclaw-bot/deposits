@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@gravity-ui/uikit';
-import { TrashBin, Pencil, Ellipsis } from '@gravity-ui/icons';
+import { TrashBin, Pencil, Ellipsis, Calendar as CalendarIcon } from '@gravity-ui/icons';
 import type { Deposit } from '../types';
 import {
   calcAvgMonthlyIncome,
@@ -98,7 +98,7 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
   }
 
   if (nextPayoutDate) {
-    tags.push({ key: 'date', text: `→ ${formatDate(nextPayoutDate)}`, kind: 'date' });
+    tags.push({ key: 'date', text: formatDate(nextPayoutDate), kind: 'date' });
   }
 
   if (deposit.status === 'closed') {
@@ -173,6 +173,14 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
             if (t.kind === 'pill') {
               return (
                 <span key={t.key} className="deposit-card__tag deposit-card__tag--pill">
+                  {t.text}
+                </span>
+              );
+            }
+            if (t.kind === 'date') {
+              return (
+                <span key={t.key} className="deposit-card__tag">
+                  <CalendarIcon size={12} style={{ flexShrink: 0 }} />
                   {t.text}
                 </span>
               );
