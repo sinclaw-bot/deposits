@@ -135,17 +135,25 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.deposit-card__color-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  border-radius: var(--radius-card) 0 0 var(--radius-card);
+.deposit-card__body {
+  padding-left: 0;
 }
 
-.deposit-card__body {
-  padding-left: 12px;
+.deposit-card__color-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.deposit-card__bank {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--g-color-text-secondary);
+  margin-top: 2px;
 }
 
 .deposit-card__header {
@@ -159,12 +167,6 @@ body {
   font-size: 16px;
   font-weight: 600;
   color: var(--g-color-text-primary);
-}
-
-.deposit-card__bank {
-  font-size: 13px;
-  color: var(--g-color-text-secondary);
-  margin-top: 2px;
 }
 
 .deposit-card__amount {

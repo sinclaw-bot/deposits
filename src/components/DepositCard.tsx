@@ -57,15 +57,19 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
 
   return (
     <div className="deposit-card" onClick={() => navigate(`/edit/${deposit.id}`)}>
-      <div
-        className="deposit-card__color-bar"
-        style={{ backgroundColor: deposit.color }}
-      />
       <div className="deposit-card__body">
         <div className="deposit-card__header">
           <div>
             <div className="deposit-card__name">{deposit.name}</div>
-            {deposit.bank && <div className="deposit-card__bank">{deposit.bank}</div>}
+            {deposit.bank && (
+              <div className="deposit-card__bank">
+                <span
+                  className="deposit-card__color-dot"
+                  style={{ backgroundColor: deposit.color }}
+                />
+                {deposit.bank}
+              </div>
+            )}
           </div>
           <div className="deposit-card__header-right">
             {deposit.status === 'closed' && (
