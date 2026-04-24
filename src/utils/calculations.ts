@@ -160,6 +160,17 @@ export function calcTotalYearForecast(deposits: Deposit[]): number {
 }
 
 /**
+ * Средневзвешенная процентная ставка по всем активным вкладам
+ */
+export function calcTotalAvgRate(deposits: Deposit[]): number {
+  const active = deposits.filter(d => d.status === 'active');
+  if (active.length === 0) return 0;
+  const totalAmount = active.reduce((s, d) => s + d.amount, 0);
+  if (totalAmount === 0) return 0;
+  return active.reduce((s, d) => s + d.interestRate * d.amount, 0) / totalAmount;
+}
+
+/**
  * Цветовая маркировка по банкам
  */
 export function getBankColor(bank: string): string {
@@ -224,6 +235,14 @@ export function formatCurrency(value: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+/**
+/**
+ * Форматирование процентной ставки с звёздочкой для капитализации
+ */
+export function formatRate(rate: number, capitalization: boolean): string {
+  return capitalization ? `${rate}%*` : `${rate}%`;
 }
 
 /**

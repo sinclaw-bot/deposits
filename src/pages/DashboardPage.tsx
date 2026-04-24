@@ -7,6 +7,8 @@ import {
   calcTotalActiveAmount,
   calcTotalMonthlyIncome,
   calcTotalYearForecast,
+  calcTotalAvgRate,
+  formatRate,
   formatCurrencyShort,
 } from '../utils/calculations';
 import { DepositCard } from '../components/DepositCard';
@@ -94,6 +96,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
   const totalAmount = calcTotalActiveAmount(deposits);
   const totalMonthly = calcTotalMonthlyIncome(deposits);
   const totalYearForecast = calcTotalYearForecast(deposits);
+  const totalAvgRate = calcTotalAvgRate(deposits);
 
   return (
     <div>
@@ -108,6 +111,12 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           <div className="summary-card__sub">
             Прогноз на год: +{formatCurrencyShort(totalYearForecast)}
           </div>
+          {totalAvgRate > 0 && (
+            <div className="summary-card__sub" style={{marginTop: 6}}>
+              Средняя ставка: {totalAvgRate.toFixed(1)}%
+              {deposits.some(d => d.status === 'active' && d.capitalization) && ' *'}
+            </div>
+          )}
         </div>
       </div>
 

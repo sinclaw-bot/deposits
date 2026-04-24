@@ -9,6 +9,7 @@ import {
   calcPaymentProgress,
   calcNextPayoutDate,
   formatCurrencyShort,
+  formatRate,
 } from '../utils/calculations';
 
 interface DepositCardProps {
@@ -115,18 +116,12 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
         <div className="deposit-card__stats-row">
           <div className="deposit-card__stat">
             <span className="deposit-card__stat-label">Ставка</span>
-            <span className="deposit-card__stat-value">{deposit.interestRate}%</span>
+            <span className="deposit-card__stat-value">{formatRate(deposit.interestRate, deposit.capitalization)}</span>
           </div>
           <div className="deposit-card__stat">
             <span className="deposit-card__stat-label">Выплаты</span>
             <span className="deposit-card__stat-value">{periodLabel}</span>
           </div>
-          {deposit.capitalization && (
-            <div className="deposit-card__stat">
-              <span className="deposit-card__stat-label">Кап-ция</span>
-              <span className="deposit-card__stat-value">Да</span>
-            </div>
-          )}
           {nextPayoutDate && (
             <div className="deposit-card__stat">
               <span className="deposit-card__stat-label">Выплата</span>
