@@ -588,14 +588,16 @@ input[type="date"] {
 
 /* Filters panel (collapsible with animation) */
 .filters-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-s);
-  margin-bottom: var(--gap-m);
-  padding: var(--gap-s) 0;
-  background: transparent;
+  will-change: max-height, opacity, transform;
+}
+
+.filters-panel--open {
   animation: filterSlideIn 0.2s ease-out both;
-  transform-origin: top center;
+}
+
+.filters-panel--closed {
+  animation: filterSlideOut 0.15s ease-in both;
+  pointer-events: none;
 }
 
 @keyframes filterSlideIn {
@@ -603,13 +605,27 @@ input[type="date"] {
     opacity: 0;
     transform: translateY(-8px);
     max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    overflow: hidden;
   }
   to {
     opacity: 1;
     transform: translateY(0);
     max-height: 300px;
+    overflow: visible;
+  }
+}
+
+@keyframes filterSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    overflow: hidden;
   }
 }
 

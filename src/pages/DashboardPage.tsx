@@ -154,8 +154,8 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
         </Button>
       </div>
 
-      {filtersOpen && (
-        <div className="filters-panel">
+      <div className={`filters-panel ${filtersOpen ? 'filters-panel--open' : 'filters-panel--closed'}`}>
+        {filtersOpen && (<div className="filters-panel__content">
           <TextInput
             size="l"
             value={searchQuery}
@@ -188,8 +188,8 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
               Сбросить фильтры
             </Button>
           )}
-        </div>
-      )}
+        </div>)}
+      </div>
 
       {active.length === 0 ? (
         <div className="empty-state">
