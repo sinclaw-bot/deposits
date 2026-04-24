@@ -227,9 +227,7 @@ body {
 }
 
 .deposit-card__actions {
-  display: flex;
-  gap: var(--gap-s);
-  margin-top: var(--gap-s);
+  display: none;
 }
 
 /* Form */
@@ -313,6 +311,100 @@ body {
 .color-swatch.--selected {
   border-color: var(--g-color-text-primary);
   transform: scale(1.15);
+}
+
+/* Deposit card — main row: amount + income on same line */
+.deposit-card__main-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--gap-s);
+}
+
+.deposit-card__income-tag {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--g-color-text-positive);
+  white-space: nowrap;
+}
+
+/* Deposit card — stats in a single row */
+.deposit-card__stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-m);
+  margin-bottom: var(--gap-s);
+}
+
+.deposit-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+  flex-shrink: 0;
+}
+
+/* Kebab menu */
+.deposit-card__menu-wrapper {
+  position: relative;
+}
+
+.deposit-card__menu-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--g-color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.deposit-card__menu-btn:hover {
+  background: var(--g-color-base-generic);
+}
+
+.deposit-card__menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  min-width: 180px;
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.deposit-card__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--g-color-text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.deposit-card__menu-item:hover {
+  background: var(--g-color-base-generic);
+}
+
+.deposit-card__menu-item--danger {
+  color: var(--g-color-text-danger);
+}
+
+/* Hide edit/delete buttons on card (moved to kebab) */
+.deposit-card__actions {
+  display: none;
 }
 
 /* Empty state */

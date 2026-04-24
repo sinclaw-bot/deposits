@@ -1,9 +1,11 @@
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@gravity-ui/uikit';
+import { Icon } from '@gravity-ui/uikit';
+import { TrashBin, Pencil, Ellipsis } from '@gravity-ui/icons';
 import type { Deposit } from '../types';
 import {
-  calcTotalIncome,
   calcAvgMonthlyIncome,
+  calcTotalIncome,
   calcProgress,
   calcNextPayoutDate,
   formatCurrencyShort,
@@ -17,18 +19,42 @@ interface DepositCardProps {
 
 export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const monthlyIncome = calcAvgMonthlyIncome(deposit);
   const totalIncome = calcTotalIncome(deposit);
   const progress = calcProgress(deposit);
   const hasEndDate = !!deposit.endDate;
   const nextPayoutDate = calcNextPayoutDate(deposit);
-  
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
+
   function formatDate(d: Date): string {
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}.${month}.${year}`;
   }
+
+  const periodLabel =
+    deposit.paymentPeriod === 'monthly' ? 'Ежемес.' :
+    deposit.paymentPeriod === 'quarterly' ? 'Ежекварт.' :
+    deposit.paymentPeriod === 'yearly' ? 'Ежегодно' : 'В конце';
+
+  const incomeLabel = deposit.paymentPeriod === 'end'
+    ? `+${formatCurrencyShort(totalIncome)}`
+    : `+${formatCurrencyShort(monthlyIncome)}/мес`;
 
   return (
     <div className="deposit-card" onClick={() => navigate(`/edit/${deposit.id}`)}>
@@ -42,48 +68,66 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
             <div className="deposit-card__name">{deposit.name}</div>
             {deposit.bank && <div className="deposit-card__bank">{deposit.bank}</div>}
           </div>
-          <span className={`status-badge status-badge--${deposit.status}`}>
-            {deposit.status === 'active' ? 'Активен' : 'Закрыт'}
-          </span>
+          <div className="deposit-card__header-right">
+            {deposit.status === 'closed' && (
+              <span className="status-badge status-badge--closed">Закрыт</span>
+            )}
+            <div className="deposit-card__menu-wrapper" ref={menuRef}>
+              <button
+                className="deposit-card__menu-btn"
+                onClick={e => { e.stopPropagation(); setMenuOpen(o => !o); }}
+                aria-label="Действия"
+              >
+                <Icon data={Ellipsis} size={18} />
+              </button>
+              {menuOpen && (
+                <div className="deposit-card__menu-dropdown">
+                  <button
+                    className="deposit-card__menu-item"
+                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onEdit(deposit.id); }}
+                  >
+                    <Icon data={Pencil} size={14} /> Редактировать
+                  </button>
+                  <button
+                    className="deposit-card__menu-item deposit-card__menu-item--danger"
+                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(deposit.id); }}
+                  >
+                    <Icon data={TrashBin} size={14} /> Удалить
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="deposit-card__amount">
-          {formatCurrencyShort(deposit.amount)}
+        <div className="deposit-card__main-row">
+          <div className="deposit-card__amount">
+            {formatCurrencyShort(deposit.amount)}
+          </div>
+          <div className="deposit-card__income-tag">
+            {incomeLabel}
+          </div>
         </div>
 
-        <div className="deposit-card__stats">
+        <div className="deposit-card__stats-row">
           <div className="deposit-card__stat">
             <span className="deposit-card__stat-label">Ставка</span>
             <span className="deposit-card__stat-value">{deposit.interestRate}%</span>
           </div>
           <div className="deposit-card__stat">
-            <span className="deposit-card__stat-label">Период</span>
-            <span className="deposit-card__stat-value">
-              {deposit.paymentPeriod === 'monthly' ? 'Ежемес.' :
-               deposit.paymentPeriod === 'quarterly' ? 'Ежекварт.' :
-               deposit.paymentPeriod === 'yearly' ? 'Ежегодно' : 'В конце'}
-            </span>
+            <span className="deposit-card__stat-label">Выплаты</span>
+            <span className="deposit-card__stat-value">{periodLabel}</span>
           </div>
-          <div className="deposit-card__stat">
-            <span className="deposit-card__stat-label">Доход в мес.</span>
-            <span className="deposit-card__stat-value --positive">
-              {deposit.paymentPeriod === 'end' ? '—' : `+${formatCurrencyShort(monthlyIncome)}`}
-            </span>
-          </div>
-          {deposit.paymentPeriod === 'end' && (
+          {deposit.capitalization && (
             <div className="deposit-card__stat">
-              <span className="deposit-card__stat-label">Доход всего</span>
-              <span className="deposit-card__stat-value --positive">
-                +{formatCurrencyShort(totalIncome)}
-              </span>
+              <span className="deposit-card__stat-label">Кап-ция</span>
+              <span className="deposit-card__stat-value">Да</span>
             </div>
           )}
           {nextPayoutDate && (
             <div className="deposit-card__stat">
-              <span className="deposit-card__stat-label">След. выплата</span>
-              <span className="deposit-card__stat-value">
-                {formatDate(nextPayoutDate)}
-              </span>
+              <span className="deposit-card__stat-label">Выплата</span>
+              <span className="deposit-card__stat-value">{formatDate(nextPayoutDate)}</span>
             </div>
           )}
         </div>
@@ -104,23 +148,6 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
             </div>
           </div>
         )}
-
-        <div className="deposit-card__actions" onClick={e => e.stopPropagation()}>
-          <Button
-            view="outlined"
-            size="l"
-            onClick={() => onEdit(deposit.id)}
-          >
-            ✏️
-          </Button>
-          <Button
-            view="outlined-danger"
-            size="l"
-            onClick={() => onDelete(deposit.id)}
-          >
-            🗑️
-          </Button>
-        </div>
       </div>
     </div>
   );

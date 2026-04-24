@@ -46,6 +46,23 @@ const STATUS_OPTIONS = [
   { value: 'closed', content: 'Закрыт' },
 ];
 
+const BANK_OPTIONS = [
+  { value: '', content: '— Не указан —' },
+  { value: 'Сбербанк', content: 'Сбербанк' },
+  { value: 'Альфа-Банк', content: 'Альфа-Банк' },
+  { value: 'Т-Банк', content: 'Т-Банк' },
+  { value: 'ВТБ', content: 'ВТБ' },
+  { value: 'Газпромбанк', content: 'Газпромбанк' },
+  { value: 'Росбанк', content: 'Росбанк' },
+  { value: 'Райффайзенбанк', content: 'Райффайзенбанк' },
+  { value: 'Открытие', content: 'Открытие' },
+  { value: 'МКБ', content: 'МКБ' },
+  { value: 'Совкомбанк', content: 'Совкомбанк' },
+  { value: 'ПСБ', content: 'ПСБ' },
+  { value: 'Уралсиб', content: 'Уралсиб' },
+  { value: 'Абсолют Банк', content: 'Абсолют Банк' },
+];
+
 function todayString(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -90,7 +107,6 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
 
   const set = (field: keyof FormData, value: string | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
-    // clear error on change
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -133,7 +149,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
       openDate: form.openDate,
       endDate: form.endDate || undefined,
       paymentPeriod: form.paymentPeriod,
-      bank: form.bank.trim() || undefined,
+      bank: form.bank || undefined,
       status: form.status,
       color: form.color,
       capitalization: form.capitalization,
@@ -163,7 +179,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
               size="l"
               value={form.name}
               onUpdate={v => set('name', v)}
-              placeholder="Например: Сбер Вклад"
+              placeholder="Например: Накопительный"
               error={errors.name}
               errorMessage={errors.name}
             />
@@ -198,16 +214,16 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
 
           <div className="form-row">
             <div className="form-label">Банк</div>
-            <TextInput
+            <Select
               size="l"
-              value={form.bank}
-              onUpdate={v => {
-                set('bank', v);
-                if (v.trim()) {
+              value={[form.bank]}
+              onUpdate={([v]) => {
+                set('bank', v ?? '');
+                if (v) {
                   set('color', getBankColor(v));
                 }
               }}
-              placeholder="Например: Сбербанк"
+              options={BANK_OPTIONS}
             />
           </div>
         </div>
