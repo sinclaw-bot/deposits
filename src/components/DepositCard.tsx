@@ -13,7 +13,7 @@ import {
 
 interface DepositCardProps {
   deposit: Deposit;
-  onEdit: (id: string) => void;
+  onEdit?: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -54,7 +54,6 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [swiping, setSwiping] = useState(false);
   const [swipeX, setSwipeX] = useState(0);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [hoverDelete, setHoverDelete] = useState(false);
 
   // Touch swipe handlers
