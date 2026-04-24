@@ -305,12 +305,7 @@ body {
   font-weight: 500;
   border-radius: var(--radius-card);
   z-index: 0;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.deposit-card__swipe-hint--visible {
-  opacity: 1;
+  pointer-events: none;
 }
 
 .deposit-card__swipe-hint-text {

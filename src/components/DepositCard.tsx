@@ -108,14 +108,17 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     ? { transform: `translateX(${swipeX}px)`, transition: 'none' }
     : {};
 
-  // Show hint when actively swiping
-  const showHint = swipeX < -10;
+  // Hint visibility and intensity based on swipe distance
+  const hintRatio = swipeX < 0 ? Math.min(1, -swipeX / SWIPE_THRESHOLD) : 0;
+  const hintOpacity = hintRatio;
+  const hintScale = 0.5 + hintRatio * 0.5;
 
   return (
     <div className="deposit-card-wrapper">
-      {/* Hint layer: sits behind the card, always visible underneath it */}
-      <div className={`deposit-card__swipe-hint ${showHint ? 'deposit-card__swipe-hint--visible' : ''}`}>
-        <Icon data={TrashBin} size={20} />
+      <div className="deposit-card__swipe-hint" style={{ opacity: hintOpacity }}>
+        <span style={{ transform: `scale(${hintScale})`, display: 'inline-flex', transition: 'transform 0.1s' }}>
+          <Icon data={TrashBin} size={20} />
+        </span>
         <span className="deposit-card__swipe-hint-text">Удалить</span>
       </div>
 
