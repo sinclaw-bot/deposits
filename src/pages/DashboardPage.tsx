@@ -155,13 +155,15 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
       </div>
 
       <div className={`filters-panel ${filtersOpen ? 'filters-panel--open' : 'filters-panel--closed'}`}>
-        {filtersOpen && (<div className="filters-panel__content">
+        {filtersOpen && (
           <TextInput
             size="l"
             value={searchQuery}
             onUpdate={setSearchQuery}
             placeholder="Поиск по названию..."
           />
+        )}
+        {filtersOpen && (
           <div className="filters-panel__row">
             <Select
               size="l"
@@ -176,19 +178,19 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
               options={bankOptions}
             />
           </div>
-          {(hasActiveFilters) && (
-            <Button
-              view="outlined"
-              size="l"
-              onClick={() => {
-                setSearchQuery('');
-                setBankFilter('all');
-              }}
-            >
-              Сбросить фильтры
-            </Button>
-          )}
-        </div>)}
+        )}
+        {filtersOpen && hasActiveFilters && (
+          <Button
+            view="outlined"
+            size="l"
+            onClick={() => {
+              setSearchQuery('');
+              setBankFilter('all');
+            }}
+          >
+            Сбросить фильтры
+          </Button>
+        )}
       </div>
 
       {active.length === 0 ? (

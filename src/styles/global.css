@@ -591,15 +591,16 @@ input[type="date"] {
   display: flex;
   flex-direction: column;
   gap: var(--gap-s);
-  margin-bottom: var(--gap-m);
   overflow: hidden;
 }
 
 .filters-panel--open {
+  margin-bottom: var(--gap-m);
   animation: filterSlideIn 0.2s ease-out forwards;
 }
 
 .filters-panel--closed {
+  margin-bottom: 0;
   animation: filterSlideOut 0.15s ease-in forwards;
   pointer-events: none;
 }
@@ -608,6 +609,8 @@ input[type="date"] {
   from {
     opacity: 0;
     max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   to {
     opacity: 1;
@@ -623,6 +626,8 @@ input[type="date"] {
   to {
     opacity: 0;
     max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 
