@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@gravity-ui/uikit';
 import { TrashBin, Calendar as CalendarIcon } from '@gravity-ui/icons';
@@ -49,7 +49,7 @@ function TinyDonut({ paid, total, color }: { paid: number; total: number; color?
 
 const SWIPE_THRESHOLD = 80; // px to trigger delete
 
-export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
+export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
   const [swiping, setSwiping] = useState(false);
