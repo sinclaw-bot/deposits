@@ -149,32 +149,42 @@ export function getBankColor(bank: string): string {
 }
 
 /**
- * Дата следующей выплаты
+ * Дата следующей выплаты (ближайшая будущая от даты открытия)
  */
 export function calcNextPayoutDate(deposit: Deposit): Date | null {
   if (deposit.status !== 'active') return null;
+  if (!deposit.openDate) return null;
+  
+  const openDate = new Date(deposit.openDate);
   const now = new Date();
-  switch (deposit.paymentPeriod) {
-    case 'monthly': {
-      const d = new Date(now);
-      d.setMonth(d.getMonth() + 1);
-      return d;
-    }
-    case 'quarterly': {
-      const d = new Date(now);
-      d.setMonth(d.getMonth() + 3);
-      return d;
-    }
-    case 'yearly': {
-      const d = new Date(now);
-      d.setFullYear(d.getFullYear() + 1);
-      return d;
-    }
-    case 'end':
-      return null;
-    default:
-      return null;
+  
+  if (deposit.paymentPeriod === 'end') {
+    return deposit.endDate ? new Date(deposit.endDate) : null;
   }
+  
+  // период в месяцах
+  let periodMonths: number;
+  switch (deposit.paymentPeriod) {
+    case 'monthly': periodMonths = 1; break;
+    case 'quarterly': periodMonths = 3; break;
+    case 'yearly': periodMonths = 12; break;
+    default: return null;
+  }
+  
+  // Идём от даты открытия вперёд, пока не перевалим за today
+  const d = new Date(openDate);
+  // если дата открытия в будущем — возвращаем её же
+  if (d > now) return d;
+  
+  // Прибавляем период, пока не станет > now
+  const MAX_ITER = 120; // 10 лет — безопасный лимит
+  let iter = 0;
+  while (d <= now && iter < MAX_ITER) {
+    d.setMonth(d.getMonth() + periodMonths);
+    iter++;
+  }
+  
+  return d;
 }
 
 /**
