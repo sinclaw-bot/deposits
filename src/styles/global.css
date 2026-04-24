@@ -183,6 +183,8 @@ body {
   overflow: visible;
   transition: box-shadow var(--transition-fast);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .deposit-card:active {
