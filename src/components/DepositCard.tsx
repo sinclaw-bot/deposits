@@ -5,7 +5,6 @@ import { TrashBin, Pencil, Ellipsis } from '@gravity-ui/icons';
 import type { Deposit } from '../types';
 import {
   calcAvgMonthlyIncome,
-  calcTotalIncome,
   calcPaymentProgress,
   calcNextPayoutDate,
   formatCurrencyShort,
@@ -24,7 +23,6 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const monthlyIncome = calcAvgMonthlyIncome(deposit);
-  const totalIncome = calcTotalIncome(deposit);
   const paymentProgress = calcPaymentProgress(deposit);
   const nextPayoutDate = calcNextPayoutDate(deposit);
 
@@ -53,7 +51,7 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
     deposit.paymentPeriod === 'yearly' ? 'Ежегодно' : 'В конце';
 
   const incomeLabel = deposit.paymentPeriod === 'end'
-    ? `+${formatCurrencyShort(totalIncome)}`
+    ? `~${formatCurrencyShort(monthlyIncome)}/мес`
     : `+${formatCurrencyShort(monthlyIncome)}/мес`;
 
   return (

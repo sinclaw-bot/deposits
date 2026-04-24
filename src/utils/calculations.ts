@@ -22,24 +22,27 @@ export function calcMonthlyIncome(deposit: Deposit): number {
 }
 
 /**
- * Доход за месяц с учётом периодичности выплат.
- * Для ежемесячных — просто monthlyIncome.
- * Для ежеквартальных — quarterlyIncome / 3.
- * Для ежегодных — yearlyIncome / 12.
- * Для "в конце срока" — 0 в месяц (весь доход в конце).
+ * Среднемесячный доход для одного вклада.
+ * Для "в конце срока" — общий доход делим на количество месяцев до endDate.
  */
 export function calcAvgMonthlyIncome(deposit: Deposit): number {
   if (deposit.status !== 'active') return 0;
   const monthly = calcMonthlyIncome(deposit);
   switch (deposit.paymentPeriod) {
     case 'monthly':
-      return monthly;
     case 'quarterly':
-      return (monthly * 3) / 3; // == monthly, but conceptually it's quarterly/3
     case 'yearly':
-      return (monthly * 12) / 12; // == monthly
-    case 'end':
-      return 0;
+      return monthly;
+    case 'end': {
+      // считаем средний за период
+      if (!deposit.endDate) return 0;
+      const totalIncome = calcTotalIncome(deposit);
+      const start = new Date(deposit.openDate);
+      const end = new Date(deposit.endDate);
+      const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+      if (months <= 0) return 0;
+      return totalIncome / months;
+    }
     default:
       return monthly;
   }
