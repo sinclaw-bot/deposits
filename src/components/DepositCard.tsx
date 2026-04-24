@@ -69,7 +69,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     touchActive.current = false;
     setSwiping(false);
     if (curX.current < -SWIPE_THRESHOLD) {
-      try { (window as any).Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('medium'); } catch {}
+      navigator.vibrate?.(10);
       onDelete(deposit.id);
     }
     setSwipeX(0);
@@ -80,7 +80,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
 
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    try { (window as any).Telegram?.WebApp?.HapticFeedback?.impactOccurred?.('medium'); } catch {}
+    navigator.vibrate?.(10);
     onDelete(deposit.id);
   }, [deposit.id, onDelete]);
 
