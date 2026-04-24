@@ -36,17 +36,14 @@ body {
 }
 
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: static;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: var(--header-height);
   padding: 0 var(--gap-m);
-  background: var(--g-color-base-float);
+  background: var(--g-color-base-background);
   border-bottom: 1px solid var(--g-color-line-generic);
-  backdrop-filter: blur(8px);
 }
 
 .app-header__title {
