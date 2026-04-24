@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@gravity-ui/uikit';
 import { TrashBin, Calendar as CalendarIcon } from '@gravity-ui/icons';
@@ -42,13 +42,34 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
   const [hoverDelete, setHoverDelete] = useState(false);
 
   const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
   const touchActive = useRef(false);
   const curX = useRef(0);
+  const deleteIdRef = useRef(deposit.id);
+
+  // Keep ref synced with prop
+  useEffect(() => { deleteIdRef.current = deposit.id; }, [deposit.id]);
+
+  const onSwipeMove = useCallback((clientX: number) => {
+    const dx = clientX - touchStartX.current;
+    const clamped = Math.min(0, dx);
+    curX.current = clamped;
+    setSwipeX(clamped);
+    setSwiping(true);
+  }, []);
+
+  const onSwipeEnd = useCallback(() => {
+    touchActive.current = false;
+    setSwiping(false);
+    if (curX.current < -SWIPE_THRESHOLD) {
+      navigator.vibrate?.(10);
+      onDelete(deleteIdRef.current);
+    }
+    setSwipeX(0);
+    curX.current = 0;
+  }, [onDelete]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
     touchActive.current = true;
     curX.current = 0;
     setSwipeX(0);
@@ -56,25 +77,31 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!touchActive.current) return;
-    const dx = e.touches[0].clientX - touchStartX.current;
-    const dy = e.touches[0].clientY - touchStartY.current;
-    if (Math.abs(dx) < Math.abs(dy) * 1.5) return;
-    const clamped = Math.min(0, dx);
-    curX.current = clamped;
-    setSwipeX(clamped);
-    setSwiping(true);
-  }, []);
+    e.preventDefault();
+    onSwipeMove(e.touches[0].clientX);
+  }, [onSwipeMove]);
 
   const handleTouchEnd = useCallback(() => {
-    touchActive.current = false;
-    setSwiping(false);
-    if (curX.current < -SWIPE_THRESHOLD) {
-      navigator.vibrate?.(10);
-      onDelete(deposit.id);
-    }
-    setSwipeX(0);
-    curX.current = 0;
-  }, [deposit.id, onDelete]);
+    // Global handler handles it — but we need to prevent card click
+  }, []);
+
+  // Global touch listeners to track finger even when it leaves the card
+  useEffect(() => {
+    const onGlobalTouchMove = (e: TouchEvent) => {
+      if (!touchActive.current) return;
+      onSwipeMove(e.touches[0].clientX);
+    };
+    const onGlobalTouchEnd = () => {
+      if (!touchActive.current) return;
+      onSwipeEnd();
+    };
+    document.addEventListener('touchmove', onGlobalTouchMove, { passive: true });
+    document.addEventListener('touchend', onGlobalTouchEnd);
+    return () => {
+      document.removeEventListener('touchmove', onGlobalTouchMove);
+      document.removeEventListener('touchend', onGlobalTouchEnd);
+    };
+  }, [onSwipeMove, onSwipeEnd]);
 
   const handleCardClick = useCallback(() => navigate(`/edit/${deposit.id}`), [navigate, deposit.id]);
 
@@ -108,7 +135,6 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     ? { transform: `translateX(${swipeX}px)`, transition: 'none' }
     : {};
 
-  // Hint visibility and intensity based on swipe distance
   const hintRatio = swipeX < 0 ? Math.min(1, -swipeX / SWIPE_THRESHOLD) : 0;
   const hintOpacity = hintRatio;
   const hintScale = 0.5 + hintRatio * 0.5;
