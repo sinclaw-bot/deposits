@@ -282,13 +282,49 @@ body {
   font-weight: 500;
 }
 
-/* Кебаб-меню */
-.deposit-card__menu-wrapper {
+/* Swipe delete */
+.deposit-card-wrapper {
   position: relative;
-  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  margin-bottom: 0;
 }
 
-.deposit-card__menu-btn {
+.deposit-card__swipe-hint {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--g-color-text-danger);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  z-index: 0;
+}
+
+.deposit-card {
+  position: relative;
+  padding: 10px var(--gap-m);
+  border-radius: var(--radius-card);
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+  overflow: visible;
+  transition: transform 0.2s ease, box-shadow var(--transition-fast);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Delete button on hover (desktop) */
+.deposit-card__delete-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,48 +334,15 @@ body {
   border-radius: 6px;
   background: transparent;
   cursor: pointer;
-  color: var(--g-color-text-hint);
-  transition: background var(--transition-fast);
-}
-
-.deposit-card__menu-btn:hover {
-  background: var(--g-color-base-simple-hover);
-  color: var(--g-color-text-primary);
-}
-
-.deposit-card__menu-dropdown {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 50;
-  min-width: 180px;
-  background: var(--g-color-base-float);
-  border: 1px solid var(--g-color-line-generic);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-}
-
-.deposit-card__menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 14px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--g-color-text-primary);
-  transition: background var(--transition-fast);
-}
-
-.deposit-card__menu-item:hover {
-  background: var(--g-color-base-simple-hover);
-}
-
-.deposit-card__menu-item--danger {
   color: var(--g-color-text-danger);
+  opacity: 0.6;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.deposit-card__delete-btn:hover {
+  opacity: 1;
+  background: var(--g-color-base-danger-light);
 }
 
 /* Workaround for color-mix not supported everywhere */
