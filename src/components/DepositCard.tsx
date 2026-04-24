@@ -47,16 +47,25 @@ function TinyDonut({ paid, total, color }: { paid: number; total: number; color?
   );
 }
 
-const SWIPE_THRESHOLD = 80; // px to trigger delete
+function triggerHaptic() {
+  try {
+    const w = window as any;
+    if (w.Telegram?.WebApp?.HapticFeedback) {
+      w.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    }
+  } catch {}
+}
+
+const SWIPE_THRESHOLD = 80;
 
 export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [swiping, setSwiping] = useState(false);
   const [swipeX, setSwipeX] = useState(0);
+  const [swiping, setSwiping] = useState(false);
   const [hoverDelete, setHoverDelete] = useState(false);
+  const [swipedPast, setSwipedPast] = useState(false);
 
-  // Touch swipe handlers
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const touchActive = useRef(false);
@@ -67,6 +76,8 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     touchStartY.current = e.touches[0].clientY;
     touchActive.current = true;
     currentSwipe.current = 0;
+    setSwipeX(0);
+    setSwipedPast(false);
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -82,6 +93,7 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     currentSwipe.current = clamped;
     setSwipeX(clamped);
     setSwiping(true);
+    setSwipedPast(clamped < -SWIPE_THRESHOLD);
   }, []);
 
   const handleTouchEnd = useCallback(() => {
@@ -89,21 +101,22 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     setSwiping(false);
 
     if (currentSwipe.current < -SWIPE_THRESHOLD) {
-      // Trigger delete confirmation
+      triggerHaptic();
       onDelete(deposit.id);
     }
 
     setSwipeX(0);
     currentSwipe.current = 0;
+    setSwipedPast(false);
   }, [deposit.id, onDelete]);
 
-  // Show delete on hover (desktop)
   const handleCardClick = useCallback(() => {
     navigate(`/edit/${deposit.id}`);
   }, [navigate, deposit.id]);
 
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
+    triggerHaptic();
     onDelete(deposit.id);
   }, [deposit.id, onDelete]);
 
@@ -127,7 +140,6 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     ? `~${formatCurrencyShort(monthlyIncome)}/мес`
     : `+${formatCurrencyShort(monthlyIncome)}/мес`;
 
-  // Build tags line
   const tags: { key: string; text: string; kind?: 'progress' | 'date' | 'positive' | 'pill' }[] = [];
 
   tags.push({ key: 'rate', text: formatRate(deposit.interestRate, deposit.capitalization) });
@@ -149,22 +161,35 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
     tags.push({ key: 'closed', text: 'Закрыт', kind: 'pill' });
   }
 
-  const swipeOffset = swiping ? swipeX : 0;
+  // Calculate how much to show the hint
+  // When swiping, hint slides in from right; card slides left
+  // The wrapper has overflow:hidden, so card moving left reveals hint underneath
+  const cardTransform = swiping ? `translateX(${swipeX}px)` : '';
+  const hintTranslate = swiping
+    ? `translateX(${Math.min(0, swipeX + 80)}px)` // hint starts outside right, follows card
+    : 'translateX(80px)'; // hidden off-screen right
 
   return (
     <div className="deposit-card-wrapper">
-      {/* Delete action hint on swipe */}
-      {swipeX < -30 && (
-        <div className="deposit-card__swipe-hint">
-          <Icon data={TrashBin} size={20} />
-          <span>Удалить</span>
-        </div>
-      )}
+      {/* Delete hint behind the card */}
+      <div
+        className="deposit-card__swipe-hint"
+        style={swiping ? { transform: hintTranslate } : undefined}
+      >
+        <Icon data={TrashBin} size={20} />
+        <span>Удалить</span>
+      </div>
 
       <div
         ref={cardRef}
         className="deposit-card"
-        style={swiping ? { transform: `translateX(${swipeOffset}px)`, transition: 'none' } : undefined}
+        style={
+          swiping
+            ? { transform: cardTransform, transition: 'none' }
+            : swipeX !== 0
+              ? { transition: 'transform 0.2s ease' }
+              : undefined
+        }
         onClick={handleCardClick}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -173,7 +198,6 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
         onMouseLeave={() => setHoverDelete(false)}
       >
         <div className="deposit-card__body">
-          {/* Top row: name + bank + hover delete */}
           <div className="deposit-card__top">
             <div className="deposit-card__top-left">
               <span className="deposit-card__name">{deposit.name}</span>
@@ -198,13 +222,11 @@ export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardP
             )}
           </div>
 
-          {/* Amount + income */}
           <div className="deposit-card__main-row">
             <span className="deposit-card__amount">{formatCurrencyShort(deposit.amount)}</span>
             <span className="deposit-card__income-tag">{incomeLabel}</span>
           </div>
 
-          {/* Tags row */}
           <div className="deposit-card__tags">
             {tags.map(t => {
               if (t.kind === 'progress') {
