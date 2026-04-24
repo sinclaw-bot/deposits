@@ -43,7 +43,6 @@ body {
   height: var(--header-height);
   padding: 0 var(--gap-m);
   background: var(--g-color-base-background);
-  border-bottom: 1px solid var(--g-color-line-generic);
 }
 
 .app-header__title {
@@ -587,16 +586,31 @@ input[type="date"] {
 
 /* Date inputs — let native picker size itself */
 
-/* Filters panel (collapsible) */
+/* Filters panel (collapsible with animation) */
 .filters-panel {
   display: flex;
   flex-direction: column;
   gap: var(--gap-s);
   margin-bottom: var(--gap-m);
-  padding: var(--gap-m);
-  background: var(--g-color-base-float);
-  border: 1px solid var(--g-color-line-generic);
-  border-radius: var(--radius-sm);
+  padding: var(--gap-s) 0;
+  background: transparent;
+  animation: filterSlideIn 0.2s ease-out both;
+  transform-origin: top center;
+}
+
+@keyframes filterSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px;
+  }
 }
 
 .filters-panel__row {
