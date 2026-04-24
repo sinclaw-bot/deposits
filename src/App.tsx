@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, Button, Icon, Drawer } from '@gravity-ui/uikit';
+import { Moon, Sun } from '@gravity-ui/icons';
 import { FileArrowUp, FileArrowDown, Bars, Eye, EyeSlash } from '@gravity-ui/icons';
 import '@gravity-ui/uikit/styles/styles.css';
 import './styles/gravity-theme.css';
@@ -165,7 +166,7 @@ export function App() {
 function ThemeToggle({ current, onToggle }: { current: 'light' | 'dark'; onToggle: () => void }) {
   return (
     <Button view="normal" size="l" onClick={onToggle} style={{ justifyContent: 'flex-start' }}>
-      {current === 'light' ? '🌙' : '☀️'} {' '}Тема: {current === 'light' ? 'тёмная' : 'светлая'}
+      <Icon data={current === 'light' ? Moon : Sun} size={16} /> Тема: {current === 'light' ? 'тёмная' : 'светлая'}
     </Button>
   );
 }
