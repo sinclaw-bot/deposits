@@ -180,7 +180,7 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
             if (t.kind === 'date') {
               return (
                 <span key={t.key} className="deposit-card__tag">
-                  <CalendarIcon size={12} style={{ flexShrink: 0 }} />
+                  <Icon data={CalendarIcon} size={12} />
                   {t.text}
                 </span>
               );
