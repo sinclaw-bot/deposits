@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Theme } from '@gravity-ui/uikit';
 
 const THEME_KEY = 'deposits-theme';
 const HIDE_KEY = 'deposits-hide-amounts';
 
 export function useThemeState() {
-  const [theme, setThemeState] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem(THEME_KEY);
     return saved === 'dark' ? 'dark' : 'light';
   });
@@ -14,7 +13,7 @@ export function useThemeState() {
     return localStorage.getItem(HIDE_KEY) === 'true';
   });
 
-  const setTheme = useCallback((t: Theme) => {
+  const setTheme = useCallback((t: 'light' | 'dark') => {
     setThemeState(t);
     localStorage.setItem(THEME_KEY, t);
   }, []);

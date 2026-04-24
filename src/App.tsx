@@ -34,7 +34,7 @@ function Header({ onMenuClick, hideAmounts, onToggleHide }: {
 }
 
 export function App() {
-  const { theme, hideAmounts, setTheme, toggleTheme, toggleHideAmounts } = useThemeState();
+  const { theme, hideAmounts, toggleTheme, toggleHideAmounts } = useThemeState();
   const [menuOpen, setMenuOpen] = useState(false);
   const { deposits, setDeposits, addDeposit, updateDeposit, deleteDeposit } = useDeposits();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
