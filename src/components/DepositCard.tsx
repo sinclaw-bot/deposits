@@ -33,7 +33,7 @@ function TinyDonut({ paid, total, color }: { paid: number; total: number; color?
   );
 }
 
-const SWIPE_THRESHOLD = 80;
+const SWIPE_THRESHOLD = 120;
 
 export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardProps) {
   const navigate = useNavigate();
