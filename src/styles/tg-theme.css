@@ -1,0 +1,13 @@
+/**
+ * Telegram theme CSS variables mapped to Gravity UI custom properties.
+ */
+
+.g-root_theme_light.tg-theme,
+.g-root_theme_dark.tg-theme {
+  --g-color-base-background: var(--tg-theme-bg-color);
+  --g-color-base-float: var(--tg-theme-section-bg-color);
+  --g-color-text-primary: var(--tg-theme-text-color);
+  --g-color-text-secondary: var(--tg-theme-hint-color);
+  --g-color-text-positive: var(--tg-theme-accent-text-color);
+  --g-color-line-generic: var(--tg-theme-section-separator-color);
+}
