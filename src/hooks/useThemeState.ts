@@ -1,57 +1,40 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Theme } from '@gravity-ui/uikit';
-import { tg } from '../lib/telegram';
 
 const THEME_STORAGE_KEY = 'deposits-theme';
-const HIDE_AMOUNTS_KEY = 'deposits-hide-amounts';
-
-export type ThemeOption = 'light' | 'dark' | 'telegram';
-
-function resolveTelegramTheme(option: ThemeOption): Theme {
-  if (option === 'telegram') {
-    return tg?.colorScheme === 'dark' ? 'dark' : 'light';
-  }
-  return option;
-}
+const HIDE_KEY = 'deposits-hide-amounts';
 
 export function useThemeState() {
-  const [themeOption, setThemeOption] = useState<ThemeOption>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved === 'telegram' || saved === 'dark' || saved === 'light') return saved;
-    return 'light';
+    return (saved === 'dark' || saved === 'light') ? saved : 'light';
   });
 
-  const [hideAmounts, setHideAmounts] = useState(() =>
-    localStorage.getItem(HIDE_AMOUNTS_KEY) === 'true'
-  );
+  const [hideAmounts, setHideAmounts] = useState(() => {
+    return localStorage.getItem(HIDE_KEY) === 'true';
+  });
 
-  const theme: Theme = resolveTelegramTheme(themeOption);
-
-  const setTheme = useCallback((option: ThemeOption) => {
-    setThemeOption(option);
-    localStorage.setItem(THEME_STORAGE_KEY, option);
+  const setTheme = useCallback((t: Theme | 'telegram') => {
+    const resolved = t === 'telegram' ? 'light' : t;
+    setThemeState(resolved);
+    localStorage.setItem(THEME_STORAGE_KEY, resolved);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    if (themeOption === 'light') {
-      setTheme('dark');
-    } else {
-      setTheme('light');
-    }
-  }, [themeOption, setTheme]);
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  }, [theme, setTheme]);
 
   const toggleHideAmounts = useCallback(() => {
-    setHideAmounts(v => !v);
+    setHideAmounts(prev => {
+      const next = !prev;
+      localStorage.setItem(HIDE_KEY, String(next));
+      return next;
+    });
   }, []);
 
-  // persist
   useEffect(() => {
-    localStorage.setItem(THEME_STORAGE_KEY, themeOption);
-  }, [themeOption]);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
-  useEffect(() => {
-    localStorage.setItem(HIDE_AMOUNTS_KEY, String(hideAmounts));
-  }, [hideAmounts]);
-
-  return { theme, themeOption, hideAmounts, setTheme, toggleTheme, toggleHideAmounts };
+  return { theme, hideAmounts, setTheme, toggleTheme, toggleHideAmounts };
 }
