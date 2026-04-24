@@ -92,7 +92,8 @@ export function calcYearForecast(deposit: Deposit): number {
 /**
  * Прогресс вклада по количеству выплат.
  * Возвращает { paid, total } — сколько выплат прошло и сколько всего.
- * Для капитализации считаем выплаты ежемесячно.
+ * Учитываем фактическую дату выплаты — зачисляем как paid только если
+ * дата очередной выплаты уже наступила.
  */
 export function calcPaymentProgress(deposit: Deposit): { paid: number; total: number } | null {
   if (!deposit.endDate || deposit.status !== 'active') return null;
@@ -112,13 +113,21 @@ export function calcPaymentProgress(deposit: Deposit): { paid: number; total: nu
   
   if (periodMonths === 0) return null;
   
-  // Сколько всего месяцев между открытием и окончанием
+  // Всего периодов между openDate и endDate
   const totalMonths = (endDate.getFullYear() - openDate.getFullYear()) * 12 + (endDate.getMonth() - openDate.getMonth());
   const totalPayments = Math.max(1, Math.floor(totalMonths / periodMonths));
   
-  // Сколько месяцев прошло от открытия до сегодня
-  const elapsedMonths = (now.getFullYear() - openDate.getFullYear()) * 12 + (now.getMonth() - openDate.getMonth());
-  const paidPayments = Math.min(totalPayments, Math.max(0, Math.floor(elapsedMonths / periodMonths)));
+  // Сколько выплат реально наступило на сегодня
+  let paidPayments = 0;
+  const cursor = new Date(openDate);
+  while (cursor <= now && paidPayments < totalPayments) {
+    cursor.setMonth(cursor.getMonth() + periodMonths);
+    paidPayments++;
+  }
+  // Если вышли за now при проверке следующей даты — последняя ещё не наступила
+  if (cursor > now && paidPayments > 0) {
+    paidPayments--;
+  }
   
   return { paid: paidPayments, total: totalPayments };
 }
