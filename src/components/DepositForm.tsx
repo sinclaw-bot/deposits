@@ -179,7 +179,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Название *</div>
             <TextInput
-              size="l"
+              size="xl"
               value={form.name}
               onUpdate={v => set('name', v)}
               placeholder="Например: Накопительный"
@@ -192,7 +192,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Сумма *</div>
               <TextInput
-                size="l"
+                size="xl"
                 type="number"
                 value={form.amount}
                 onUpdate={v => set('amount', v)}
@@ -204,7 +204,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Ставка (% годовых) *</div>
               <TextInput
-                size="l"
+                size="xl"
                 type="number"
                 value={form.interestRate}
                 onUpdate={v => set('interestRate', v)}
@@ -218,7 +218,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Банк</div>
             <Select
-              size="l"
+              size="xl"
               value={[form.bank]}
               onUpdate={([v]) => {
                 set('bank', v ?? '');
@@ -238,7 +238,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Дата открытия *</div>
               <DatePicker
-                size="l"
+                size="xl"
                 value={parseDt(form.openDate)}
                 onUpdate={(dt) => {
                   // force UTC so the stored string doesn't drift by timezone
@@ -252,7 +252,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
             <div>
               <div className="form-label">Дата окончания</div>
               <DatePicker
-                size="l"
+                size="xl"
                 value={parseDt(form.endDate)}
                 onUpdate={(dt) => {
                   const val = dt ? `${dt.year()}-${String(dt.month()).padStart(2, '0')}-${String(dt.date()).padStart(2, '0')}` : '';
@@ -271,7 +271,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Периодичность выплаты процентов</div>
             <Select
-              size="l"
+              size="xl"
               value={[form.paymentPeriod]}
               onUpdate={([v]) => v && set('paymentPeriod', v as PaymentPeriod)}
               options={PAYMENT_OPTIONS}
@@ -291,7 +291,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
           <div className="form-row">
             <div className="form-label">Статус</div>
             <Select
-              size="l"
+              size="xl"
               value={[form.status]}
               onUpdate={([v]) => v && set('status', v as DepositStatus)}
               options={STATUS_OPTIONS}
@@ -310,10 +310,10 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
         </div>
 
         <div className="form-actions">
-          <Button view="outlined" size="l" onClick={() => navigate('/')}>
+          <Button view="outlined" size="xl" onClick={() => navigate('/')}>
             Отмена
           </Button>
-          <Button view="action" size="l" type="submit">
+          <Button view="action" size="xl" type="submit">
             {isEdit ? 'Сохранить' : 'Добавить'}
           </Button>
         </div>
