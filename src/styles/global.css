@@ -194,7 +194,11 @@ body {
 .deposit-card__body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+
+.deposit-card__body > .deposit-card__main-row {
+  margin-top: 2px;
 }
 
 .deposit-card__top {
