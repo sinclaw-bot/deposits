@@ -588,44 +588,41 @@ input[type="date"] {
 
 /* Filters panel (collapsible with animation) */
 .filters-panel {
-  will-change: max-height, opacity, transform;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  margin-bottom: var(--gap-m);
+  overflow: hidden;
 }
 
 .filters-panel--open {
-  animation: filterSlideIn 0.2s ease-out both;
+  animation: filterSlideIn 0.2s ease-out forwards;
 }
 
 .filters-panel--closed {
-  animation: filterSlideOut 0.15s ease-in both;
+  animation: filterSlideOut 0.15s ease-in forwards;
   pointer-events: none;
 }
 
 @keyframes filterSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
     max-height: 0;
-    overflow: hidden;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
     max-height: 300px;
-    overflow: visible;
   }
 }
 
 @keyframes filterSlideOut {
   from {
     opacity: 1;
-    transform: translateY(0);
     max-height: 300px;
   }
   to {
     opacity: 0;
-    transform: translateY(-8px);
     max-height: 0;
-    overflow: hidden;
   }
 }
 
