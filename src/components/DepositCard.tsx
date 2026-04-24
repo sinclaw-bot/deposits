@@ -149,6 +149,7 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
             <div className="deposit-card__progress-label">
               {paymentProgress.paid} из {paymentProgress.total} выплат
             </div>
+
           </div>
         )}
       </div>

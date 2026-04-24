@@ -134,8 +134,11 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
 
   const parseDt = (d: string): ReturnType<typeof dateTime> | undefined => {
     if (!d) return undefined;
+    // Gravity UI DatePicker работает в локальной таймзоне браузера.
+    // Чтобы не было сдвига на -1 день (UTC vs UTC+3),
+    // создаём dateTime без указания timeZone — будет локальная.
     const [y, m, day] = d.split('-').map(Number);
-    return dateTime({ timeZone: 'UTC' }).year(y).month(m).date(day);
+    return dateTime().year(y).month(m).date(day);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -238,6 +241,7 @@ export function DepositForm({ deposits, onSave, onUpdate }: DepositFormProps) {
                 size="l"
                 value={parseDt(form.openDate)}
                 onUpdate={(dt) => {
+                  // force UTC so the stored string doesn't drift by timezone
                   const val = dt ? `${dt.year()}-${String(dt.month()).padStart(2, '0')}-${String(dt.date()).padStart(2, '0')}` : '';
                   set('openDate', val);
                 }}
