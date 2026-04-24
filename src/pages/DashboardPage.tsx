@@ -147,7 +147,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
         </div>
         <Button
           view={hasActiveFilters ? 'action' : 'flat'}
-          size="l"
+          size="xl"
           onClick={() => setFiltersOpen(o => !o)}
         >
           <Icon data={hasActiveFilters ? Funnel : Sliders} size={18} />
@@ -157,20 +157,20 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
       <div className={`filters-panel ${filtersOpen ? 'filters-panel--open' : 'filters-panel--closed'}`}>
         <div className="filters-panel__in">
           <TextInput
-            size="l"
+            size="xl"
             value={searchQuery}
             onUpdate={setSearchQuery}
             placeholder="Поиск по названию..."
           />
           <div className="filters-panel__row">
             <Select
-              size="l"
+              size="xl"
               value={[sortMode]}
               onUpdate={([v]) => v && setSortMode(v as SortMode)}
               options={SORT_OPTIONS}
             />
             <Select
-              size="l"
+              size="xl"
               value={[bankFilter]}
               onUpdate={([v]) => v && setBankFilter(v)}
               options={bankOptions}
@@ -179,7 +179,7 @@ export function DashboardPage({ deposits, onEdit, onDelete }: DashboardPageProps
           {hasActiveFilters && (
             <Button
               view="outlined"
-              size="l"
+              size="xl"
               onClick={() => {
                 setSearchQuery('');
                 setBankFilter('all');

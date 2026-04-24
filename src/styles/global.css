@@ -54,6 +54,12 @@ body {
 .app-header__actions {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
   gap: var(--gap-s);
 }
 
@@ -170,12 +176,15 @@ body {
 
 .deposit-card {
   position: relative;
-  padding: var(--gap-m);
+  padding: 10px var(--gap-m);
   border-radius: var(--radius-card);
   background: var(--g-color-base-float);
   border: 1px solid var(--g-color-line-generic);
-  overflow: hidden;
+  overflow: visible;
   transition: box-shadow var(--transition-fast);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .deposit-card:active {
@@ -183,100 +192,177 @@ body {
 }
 
 .deposit-card__body {
-  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.deposit-card__body > .deposit-card__main-row {
+  margin-top: 2px;
+}
+
+.deposit-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deposit-card__top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.deposit-card__bank-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--g-color-text-secondary);
+  white-space: nowrap;
 }
 
 .deposit-card__color-dot {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.deposit-card__bank {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--g-color-text-secondary);
-  margin-top: 2px;
-}
-
-.deposit-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--gap-s);
-}
-
 .deposit-card__name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--g-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deposit-card__main-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
 }
 
 .deposit-card__amount {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--g-color-text-primary);
-  margin-bottom: var(--gap-s);
 }
 
-.deposit-card__stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-s);
-  margin-bottom: var(--gap-s);
-}
-
-.deposit-card__stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.deposit-card__stat-label {
-  font-size: 11px;
-  color: var(--g-color-text-hint);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.deposit-card__stat-value {
+.deposit-card__income-tag {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--g-color-text-primary);
-}
-
-.deposit-card__stat-value.--positive {
+  font-weight: 700;
   color: var(--g-color-text-positive);
+  white-space: nowrap;
 }
 
-.deposit-card__progress {
-  margin-top: var(--gap-s);
+/* Tags row — compact inline */
+.deposit-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
 }
 
-.deposit-card__progress-bar {
-  height: 4px;
-  background: var(--g-color-line-generic);
-  border-radius: 2px;
-  overflow: hidden;
+.deposit-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--g-color-text-secondary);
+  white-space: nowrap;
 }
 
-.deposit-card__progress-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width var(--transition-fast);
-}
-
-.deposit-card__progress-label {
+.deposit-card__tag--pill {
+  padding: 0 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--g-color-text-danger) 12%, transparent);
+  color: var(--g-color-text-danger);
   font-size: 11px;
-  color: var(--g-color-text-hint);
-  margin-top: 4px;
+  font-weight: 500;
 }
 
-.deposit-card__actions {
-  display: none;
+/* Swipe delete */
+.deposit-card-wrapper {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.deposit-card__swipe-hint {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+  gap: 4px;
+  background: var(--g-color-text-danger);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: var(--radius-card);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.deposit-card-wrapper {
+  touch-action: pan-y;
+}
+
+.deposit-card__swipe-hint-text {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.deposit-card {
+  position: relative;
+  padding: 10px var(--gap-m);
+  border-radius: var(--radius-card);
+  background: var(--g-color-base-float);
+  border: 1px solid var(--g-color-line-generic);
+  transition: transform 0.2s ease, box-shadow var(--transition-fast);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  z-index: 1;
+  will-change: transform;
+  background-color: var(--g-color-base-float);
+}
+
+/* Delete button on hover (desktop) */
+.deposit-card__delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--g-color-text-danger);
+  opacity: 0.6;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.deposit-card__delete-btn:hover {
+  opacity: 1;
+  background: var(--g-color-base-danger-light);
+}
+
+/* Workaround for color-mix not supported everywhere */
+@supports not (color: color-mix(in srgb, red, transparent)) {
+  .deposit-card__tag--pill {
+    background: rgba(229, 57, 53, 0.12);
+  }
 }
 
 /* Form */
@@ -392,64 +478,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Kebab menu */
-.deposit-card__menu-wrapper {
-  position: relative;
-}
 
-.deposit-card__menu-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--g-color-text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background var(--transition-fast);
-}
-
-.deposit-card__menu-btn:hover {
-  background: var(--g-color-base-generic);
-}
-
-.deposit-card__menu-dropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 4px);
-  min-width: 180px;
-  background: var(--g-color-base-float);
-  border: 1px solid var(--g-color-line-generic);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  z-index: 200;
-  overflow: hidden;
-}
-
-.deposit-card__menu-item {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-s);
-  width: 100%;
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  color: var(--g-color-text-primary);
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--transition-fast);
-}
-
-.deposit-card__menu-item:hover {
-  background: var(--g-color-base-generic);
-}
-
-.deposit-card__menu-item--danger {
-  color: var(--g-color-text-danger);
-}
 
 /* Hide edit/delete buttons on card (moved to kebab) */
 .deposit-card__actions {
@@ -517,26 +546,7 @@ body {
   justify-content: flex-end;
 }
 
-/* Status badge */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 500;
-}
 
-.status-badge--active {
-  background: var(--g-color-base-positive-light);
-  color: var(--g-color-text-positive);
-}
-
-.status-badge--closed {
-  background: var(--g-color-base-danger-light);
-  color: var(--g-color-text-danger);
-}
 
 /* Date input styling to match Gravity UI */
 input[type="date"] {
@@ -670,4 +680,23 @@ input[type="date"] {
     bottom: 32px;
     right: 32px;
   }
+}
+
+/* Hide amounts mode */
+html.hide-amounts .deposit-card__amount,
+html.hide-amounts .deposit-card__income-tag,
+html.hide-amounts .summary-card__amount,
+html.hide-amounts .summary-card__income,
+html.hide-amounts .summary-card__stat-value--positive {
+  filter: blur(8px);
+  user-select: none;
+  transition: filter 0.2s ease;
+}
+
+html.hide-amounts .summary-card__stat-value {
+  filter: blur(8px);
+}
+
+html.hide-amounts .deposit-card__tag:first-child {
+  filter: blur(8px);
 }

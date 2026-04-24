@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@gravity-ui/uikit';
-import { TrashBin, Pencil, Ellipsis } from '@gravity-ui/icons';
+import { TrashBin, Calendar as CalendarIcon } from '@gravity-ui/icons';
 import type { Deposit } from '../types';
 import {
   calcAvgMonthlyIncome,
@@ -13,138 +13,186 @@ import {
 
 interface DepositCardProps {
   deposit: Deposit;
-  onEdit: (id: string) => void;
+  onEdit?: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
+function TinyDonut({ paid, total, color }: { paid: number; total: number; color?: string }) {
+  const size = 16;
+  const stroke = 2.5;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const dash = (paid / total) * circ;
+  const gap = circ - dash;
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--g-color-line-generic)" strokeWidth={stroke} opacity={0.3} />
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color || 'var(--g-color-text-primary)'} strokeWidth={stroke} strokeDasharray={`${dash} ${gap}`} strokeLinecap="round" transform={`rotate(-90 ${size/2} ${size/2})`} />
+    </svg>
+  );
+}
+
+const SWIPE_THRESHOLD = 120;
+
+export function DepositCard({ deposit, onEdit: _onEdit, onDelete }: DepositCardProps) {
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [swipeX, setSwipeX] = useState(0);
+  const [swiping, setSwiping] = useState(false);
+  const [hoverDelete, setHoverDelete] = useState(false);
+
+  const touchStartX = useRef(0);
+  const touchActive = useRef(false);
+  const curX = useRef(0);
+  const deleteIdRef = useRef(deposit.id);
+
+  // Keep ref synced with prop
+  useEffect(() => { deleteIdRef.current = deposit.id; }, [deposit.id]);
+
+  const onSwipeMove = useCallback((clientX: number) => {
+    const dx = clientX - touchStartX.current;
+    const clamped = Math.min(0, dx);
+    curX.current = clamped;
+    setSwipeX(clamped);
+    setSwiping(true);
+  }, []);
+
+  const onSwipeEnd = useCallback(() => {
+    touchActive.current = false;
+    setSwiping(false);
+    if (curX.current < -SWIPE_THRESHOLD) {
+      navigator.vibrate?.(10);
+      onDelete(deleteIdRef.current);
+    }
+    setSwipeX(0);
+    curX.current = 0;
+  }, [onDelete]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchActive.current = true;
+    curX.current = 0;
+    setSwipeX(0);
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchActive.current) return;
+    e.preventDefault();
+    onSwipeMove(e.touches[0].clientX);
+  }, [onSwipeMove]);
+
+  const handleTouchEnd = useCallback(() => {
+    // Global handler handles it — but we need to prevent card click
+  }, []);
+
+  // Global touch listeners to track finger even when it leaves the card
+  useEffect(() => {
+    const onGlobalTouchMove = (e: TouchEvent) => {
+      if (!touchActive.current) return;
+      onSwipeMove(e.touches[0].clientX);
+    };
+    const onGlobalTouchEnd = () => {
+      if (!touchActive.current) return;
+      onSwipeEnd();
+    };
+    document.addEventListener('touchmove', onGlobalTouchMove, { passive: true });
+    document.addEventListener('touchend', onGlobalTouchEnd);
+    return () => {
+      document.removeEventListener('touchmove', onGlobalTouchMove);
+      document.removeEventListener('touchend', onGlobalTouchEnd);
+    };
+  }, [onSwipeMove, onSwipeEnd]);
+
+  const handleCardClick = useCallback(() => navigate(`/edit/${deposit.id}`), [navigate, deposit.id]);
+
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.vibrate?.(10);
+    onDelete(deposit.id);
+  }, [deposit.id, onDelete]);
 
   const monthlyIncome = calcAvgMonthlyIncome(deposit);
   const paymentProgress = calcPaymentProgress(deposit);
   const nextPayoutDate = calcNextPayoutDate(deposit);
 
-  // Close menu on outside click
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [menuOpen]);
+  const formatDate = (d: Date) => {
+    const day = String(d.getDate()).padStart(2,'0');
+    const month = String(d.getMonth()+1).padStart(2,'0');
+    return `${day}.${month}.${d.getFullYear()}`;
+  };
 
-  function formatDate(d: Date): string {
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
-  }
+  const periodLabel = deposit.paymentPeriod === 'monthly' ? 'Ежемес' : deposit.paymentPeriod === 'quarterly' ? 'Ежекварт' : deposit.paymentPeriod === 'yearly' ? 'Ежегод' : 'В конце';
+  const incomeLabel = deposit.paymentPeriod === 'end' ? `~${formatCurrencyShort(monthlyIncome)}/мес` : `+${formatCurrencyShort(monthlyIncome)}/мес`;
 
-  const periodLabel =
-    deposit.paymentPeriod === 'monthly' ? 'Ежемес.' :
-    deposit.paymentPeriod === 'quarterly' ? 'Ежекварт.' :
-    deposit.paymentPeriod === 'yearly' ? 'Ежегодно' : 'В конце';
+  const tags: { key: string; text: string; kind?: 'progress'|'date'|'pill' }[] = [];
+  tags.push({ key: 'rate', text: formatRate(deposit.interestRate, deposit.capitalization) });
+  tags.push({ key: 'period', text: periodLabel });
+  if (paymentProgress) tags.push({ key: 'progress', text: `${paymentProgress.paid}/${paymentProgress.total}`, kind: 'progress' });
+  if (nextPayoutDate) tags.push({ key: 'date', text: formatDate(nextPayoutDate), kind: 'date' });
+  if (deposit.status === 'closed') tags.push({ key: 'closed', text: 'Закрыт', kind: 'pill' });
 
-  const incomeLabel = deposit.paymentPeriod === 'end'
-    ? `~${formatCurrencyShort(monthlyIncome)}/мес`
-    : `+${formatCurrencyShort(monthlyIncome)}/мес`;
+  const cardStyle: React.CSSProperties = swiping
+    ? { transform: `translateX(${swipeX}px)`, transition: 'none' }
+    : {};
+
+  const hintRatio = swipeX < 0 ? Math.min(1, -swipeX / SWIPE_THRESHOLD) : 0;
+  const hintOpacity = hintRatio;
+  const hintScale = 0.5 + hintRatio * 0.5;
 
   return (
-    <div className="deposit-card" onClick={() => navigate(`/edit/${deposit.id}`)}>
-      <div className="deposit-card__body">
-        <div className="deposit-card__header">
-          <div>
-            <div className="deposit-card__name">{deposit.name}</div>
-            {deposit.bank && (
-              <div className="deposit-card__bank">
-                <span
-                  className="deposit-card__color-dot"
-                  style={{ backgroundColor: deposit.color }}
-                />
-                {deposit.bank}
-              </div>
-            )}
-          </div>
-          <div className="deposit-card__header-right">
-            {deposit.status === 'closed' && (
-              <span className="status-badge status-badge--closed">Закрыт</span>
-            )}
-            <div className="deposit-card__menu-wrapper" ref={menuRef}>
-              <button
-                className="deposit-card__menu-btn"
-                onClick={e => { e.stopPropagation(); setMenuOpen(o => !o); }}
-                aria-label="Действия"
-              >
-                <Icon data={Ellipsis} size={18} />
-              </button>
-              {menuOpen && (
-                <div className="deposit-card__menu-dropdown">
-                  <button
-                    className="deposit-card__menu-item"
-                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onEdit(deposit.id); }}
-                  >
-                    <Icon data={Pencil} size={14} /> Редактировать
-                  </button>
-                  <button
-                    className="deposit-card__menu-item deposit-card__menu-item--danger"
-                    onClick={e => { e.stopPropagation(); setMenuOpen(false); onDelete(deposit.id); }}
-                  >
-                    <Icon data={TrashBin} size={14} /> Удалить
-                  </button>
-                </div>
+    <div className="deposit-card-wrapper">
+      <div className="deposit-card__swipe-hint" style={{ opacity: hintOpacity }}>
+        <span style={{ transform: `scale(${hintScale})`, display: 'inline-flex', transition: 'transform 0.1s' }}>
+          <Icon data={TrashBin} size={20} />
+        </span>
+        <span className="deposit-card__swipe-hint-text">Удалить</span>
+      </div>
+
+      <div
+        className="deposit-card"
+        style={cardStyle}
+        onClick={handleCardClick}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseEnter={() => setHoverDelete(true)}
+        onMouseLeave={() => setHoverDelete(false)}
+      >
+        <div className="deposit-card__body">
+          <div className="deposit-card__top">
+            <div className="deposit-card__top-left">
+              <span className="deposit-card__name">{deposit.name}</span>
+              {deposit.bank && (
+                <span className="deposit-card__bank-label">
+                  <span className="deposit-card__color-dot" style={{ backgroundColor: deposit.color }} />
+                  {deposit.bank}
+                </span>
               )}
             </div>
+            {hoverDelete && (
+              <button className="deposit-card__delete-btn" onClick={handleDeleteClick} aria-label="Удалить">
+                <Icon data={TrashBin} size={16} />
+              </button>
+            )}
+          </div>
+          <div className="deposit-card__main-row">
+            <span className="deposit-card__amount">{formatCurrencyShort(deposit.amount)}</span>
+            <span className="deposit-card__income-tag">{incomeLabel}</span>
+          </div>
+          <div className="deposit-card__tags">
+            {tags.map(t => {
+              if (t.kind === 'progress') return (
+                <span key={t.key} className="deposit-card__tag">
+                  <TinyDonut paid={paymentProgress!.paid} total={paymentProgress!.total} color={deposit.color} />
+                  {t.text}
+                </span>
+              );
+              if (t.kind === 'pill') return <span key={t.key} className="deposit-card__tag deposit-card__tag--pill">{t.text}</span>;
+              if (t.kind === 'date') return <span key={t.key} className="deposit-card__tag"><Icon data={CalendarIcon} size={12} />{t.text}</span>;
+              return <span key={t.key} className="deposit-card__tag">{t.text}</span>;
+            })}
           </div>
         </div>
-
-        <div className="deposit-card__main-row">
-          <div className="deposit-card__amount">
-            {formatCurrencyShort(deposit.amount)}
-          </div>
-          <div className="deposit-card__income-tag">
-            {incomeLabel}
-          </div>
-        </div>
-
-        <div className="deposit-card__stats-row">
-          <div className="deposit-card__stat">
-            <span className="deposit-card__stat-label">Ставка</span>
-            <span className="deposit-card__stat-value">{formatRate(deposit.interestRate, deposit.capitalization)}</span>
-          </div>
-          <div className="deposit-card__stat">
-            <span className="deposit-card__stat-label">Выплаты</span>
-            <span className="deposit-card__stat-value">{periodLabel}</span>
-          </div>
-          {nextPayoutDate && (
-            <div className="deposit-card__stat">
-              <span className="deposit-card__stat-label">Выплата</span>
-              <span className="deposit-card__stat-value">{formatDate(nextPayoutDate)}</span>
-            </div>
-          )}
-        </div>
-
-        {paymentProgress && (
-          <div className="deposit-card__progress">
-            <div className="deposit-card__progress-bar">
-              <div
-                className="deposit-card__progress-fill"
-                style={{
-                  width: `${Math.round((paymentProgress.paid / paymentProgress.total) * 100)}%`,
-                  backgroundColor: deposit.color,
-                }}
-              />
-            </div>
-            <div className="deposit-card__progress-label">
-              {paymentProgress.paid} из {paymentProgress.total} выплат
-            </div>
-
-          </div>
-        )}
       </div>
     </div>
   );
