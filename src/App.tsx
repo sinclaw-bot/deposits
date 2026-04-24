@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, Button, Icon, Drawer } from '@gravity-ui/uikit';
-import { FileArrowUp, FileArrowDown, Sun, Moon, Bars, Eye, EyeSlash } from '@gravity-ui/icons';
+import { FileArrowUp, FileArrowDown, Bars, Eye, EyeSlash } from '@gravity-ui/icons';
 import '@gravity-ui/uikit/styles/styles.css';
 import './styles/gravity-theme.css';
 import './styles/tg-theme.css';
@@ -36,7 +36,7 @@ function Header({ onMenuClick, hideAmounts, onToggleHide }: {
 }
 
 export function App() {
-  const { theme, themeOption, hideAmounts, setTheme, toggleTheme, toggleHideAmounts } = useThemeState();
+  const { theme, themeOption, hideAmounts, setTheme, toggleHideAmounts } = useThemeState();
   const [menuOpen, setMenuOpen] = useState(false);
   const { deposits, setDeposits, addDeposit, updateDeposit, deleteDeposit } = useDeposits();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -189,9 +189,7 @@ export function App() {
               <Button view="normal" size="l" onClick={handleImportClick} style={{ justifyContent: 'flex-start' }}>
                 <Icon data={FileArrowDown} size={16} /> Импорт данных
               </Button>
-              <Button view="flat" size="l" onClick={toggleTheme} style={{ justifyContent: 'flex-start' }}>
-                <Icon data={theme === 'light' ? Moon : Sun} size={16} /> {theme === 'light' ? 'Тёмная тема' : 'Светлая тема'}
-              </Button>
+
 
               <hr style={{ border: 'none', borderTop: '1px solid var(--g-color-line-generic)', margin: '8px 0' }} />
 
