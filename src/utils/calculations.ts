@@ -90,19 +90,37 @@ export function calcYearForecast(deposit: Deposit): number {
 }
 
 /**
- * Прогресс вклада от 0 до 1 (на основе дат)
+ * Прогресс вклада по количеству выплат.
+ * Возвращает { paid, total } — сколько выплат прошло и сколько всего.
+ * Для капитализации считаем выплаты ежемесячно.
  */
-export function calcProgress(deposit: Deposit): number {
-  if (!deposit.endDate) return 0;
-  const start = new Date(deposit.openDate);
-  const end = new Date(deposit.endDate);
+export function calcPaymentProgress(deposit: Deposit): { paid: number; total: number } | null {
+  if (!deposit.endDate || deposit.status !== 'active') return null;
+  
+  const openDate = new Date(deposit.openDate);
+  const endDate = new Date(deposit.endDate);
   const now = new Date();
-
-  const total = daysBetween(start, end);
-  const elapsed = daysBetween(start, now);
-
-  if (total <= 0) return 0;
-  return Math.min(1, Math.max(0, elapsed / total));
+  
+  let periodMonths: number;
+  switch (deposit.paymentPeriod) {
+    case 'monthly': periodMonths = 1; break;
+    case 'quarterly': periodMonths = 3; break;
+    case 'yearly': periodMonths = 12; break;
+    case 'end': periodMonths = 0; break;
+    default: return null;
+  }
+  
+  if (periodMonths === 0) return null;
+  
+  // Сколько всего месяцев между открытием и окончанием
+  const totalMonths = (endDate.getFullYear() - openDate.getFullYear()) * 12 + (endDate.getMonth() - openDate.getMonth());
+  const totalPayments = Math.max(1, Math.floor(totalMonths / periodMonths));
+  
+  // Сколько месяцев прошло от открытия до сегодня
+  const elapsedMonths = (now.getFullYear() - openDate.getFullYear()) * 12 + (now.getMonth() - openDate.getMonth());
+  const paidPayments = Math.min(totalPayments, Math.max(0, Math.floor(elapsedMonths / periodMonths)));
+  
+  return { paid: paidPayments, total: totalPayments };
 }
 
 /**

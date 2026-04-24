@@ -6,7 +6,7 @@ import type { Deposit } from '../types';
 import {
   calcAvgMonthlyIncome,
   calcTotalIncome,
-  calcProgress,
+  calcPaymentProgress,
   calcNextPayoutDate,
   formatCurrencyShort,
 } from '../utils/calculations';
@@ -24,8 +24,7 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
 
   const monthlyIncome = calcAvgMonthlyIncome(deposit);
   const totalIncome = calcTotalIncome(deposit);
-  const progress = calcProgress(deposit);
-  const hasEndDate = !!deposit.endDate;
+  const paymentProgress = calcPaymentProgress(deposit);
   const nextPayoutDate = calcNextPayoutDate(deposit);
 
   // Close menu on outside click
@@ -132,19 +131,19 @@ export function DepositCard({ deposit, onEdit, onDelete }: DepositCardProps) {
           )}
         </div>
 
-        {hasEndDate && (
+        {paymentProgress && (
           <div className="deposit-card__progress">
             <div className="deposit-card__progress-bar">
               <div
                 className="deposit-card__progress-fill"
                 style={{
-                  width: `${Math.round(progress * 100)}%`,
+                  width: `${Math.round((paymentProgress.paid / paymentProgress.total) * 100)}%`,
                   backgroundColor: deposit.color,
                 }}
               />
             </div>
             <div className="deposit-card__progress-label">
-              {Math.round(progress * 100)}% завершено
+              {paymentProgress.paid} из {paymentProgress.total} выплат
             </div>
           </div>
         )}
